@@ -15,14 +15,11 @@ with open(INPUT_FILE) as fh:
 
 # Dedup numbers and throw out any numbers greater than DESIRED_SUM
 input = sorted([number for number in set(numbers) if number <= DESIRED_SUM])
-input_len = len(input)
-#print('input', input)
-#print('input_len', input_len)
-
 
 def find_3_parts_sum(input, desired_sum):
     # Deprecated - use find_var_parts_sum instead
     number = [0] * 3
+    input_len = len(input)
     for idx_0 in range(input_len):
         number[0] = input[idx_0]
         for idx_1 in range(idx_0+1, input_len):
@@ -57,23 +54,27 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
         # Using None as initial value to help assert if I'm doing something dumb later
         addends = [None] * num_addends
 
+    if addend_idx == num_addends-1:
+        # If we're looking at the last addend, we can calculate the last number needed instead of iterating through
+        # the input_list
+        input_set = set(input_list)
+        cur_sum = sum(addends[:-1])
+        desired_addend = desired_sum - cur_sum
+        if desired_addend in input_set:
+            addends[addend_idx] = desired_addend
+            return addends
+
+        return None
+
     for input in input_list:
         addends[addend_idx] = input
 
-        if addend_idx < num_addends-1:
-            if sum(addends[:addend_idx]) > DESIRED_SUM:
-                # sum is too large, so don't need to recurse again since the rest of the list is bigger
-                return None
-            temp_res = find_var_parts_sum(input_list[1:], desired_sum, num_addends=num_addends, addends=addends, addend_idx=addend_idx+1)
-            if temp_res:
-                return temp_res
-        else:
-            cur_sum = sum(addends)
-            if cur_sum == desired_sum:
-                return addends
-            elif cur_sum > desired_sum:
-                # sum is too large, so can skip the rest since they will be larger
-                break
+        if sum(addends[:addend_idx]) > DESIRED_SUM:
+            # sum is too large, so don't need to recurse again since the rest of the list is bigger
+            return None
+        temp_res = find_var_parts_sum(input_list[1:], desired_sum, num_addends=num_addends, addends=addends, addend_idx=addend_idx+1)
+        if temp_res:
+            return temp_res
 
     if None not in addends and sum(addends) == desired_sum:
         return addends
