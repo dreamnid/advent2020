@@ -12,8 +12,9 @@ with open(INPUT_FILE) as fh:
         line_parts = line.split(' ')
         char_limits = list(map(int, line_parts[0].split('-')))
         char = line_parts[1][0]
+        password = line_parts[2]
 
-        char_count = line_parts[2].count(char)
+        char_count = password.count(char)
         if char_limits[0] <= char_count <= char_limits[1]:
             valid += 1
 
