@@ -75,7 +75,7 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
                 # sum is too large, so can skip the rest since they will be larger
                 break
 
-    if sum(addends) == desired_sum:
+    if None not in addends and sum(addends) == desired_sum:
         return addends
 
     # Didn't find a result
