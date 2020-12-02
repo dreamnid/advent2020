@@ -20,7 +20,7 @@ with open(INPUT_FILE) as fh:
         #print(char, char_pos, password, res.count(True))
 
         # Note that the character can't be in both positions!
-        if res.count(True) == 1:
+        if sum(res) == 1:
            valid += 1
 
 print("Number of valid passwords", valid)
