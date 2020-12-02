@@ -21,6 +21,7 @@ print('input_len', input_len)
 
 
 def find_3_parts_sum(input, desired_sum):
+    # Deprecated - use find_var_parts_sum instead
     number = [0] * 3
     for idx_0 in range(input_len):
         number[0] = input[idx_0]
@@ -42,7 +43,7 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
     """
     Find the combination of numbers in the input_list that adds up to desired_sum
 
-    :param input_list: The list of available numbers
+    :param input_list: The *sorted* list of available numbers
     :param desired_sum: The target sum that the addends should add to
     :param num_addends: The desired number of addends that should add up to desired_sum
     :param addends: private - buffer holding current result
