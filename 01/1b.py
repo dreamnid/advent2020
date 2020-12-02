@@ -45,13 +45,13 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
 
     :param input_list: The *sorted* list of available numbers
     :param desired_sum: The target sum that the addends should add to
-    :param num_addends: The desired number of addends that should add up to desired_sum
+    :param num_addends: The desired number of addends that should add up to desired_sum. [e.g. 2 mean a+b, 3 means a+b+c, etc.]
     :param addends: private - buffer holding current result
     :param addend_idx: private - index of the addend list that is currently being worked on
     :return: The list of numbers that add up to the desired_sum or None if no solution found
 
     Note that this is a recursive call. Each recursion call works on the next addend hence why we pass
-    the input_list without the first elemtn and 1 is added to addend_idx
+    the input_list without the first element and 1 is added to addend_idx
     """
     if not addends:
         # Using None as initial value to help assert if I'm doing something dumb later
