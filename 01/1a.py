@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 INPUT_FILE = '1-input.txt'
 
 DESIRED_SUM = 2020
