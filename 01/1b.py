@@ -54,6 +54,7 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
     the input_list without the first elemtn and 1 is added to addend_idx
     """
     if not addends:
+        # Using None as initial value to help assert if I'm doing something dumb later
         addends = [None] * num_addends
 
     for input in input_list:
