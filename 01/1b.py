@@ -16,8 +16,8 @@ with open(INPUT_FILE) as fh:
 # Dedup numbers and throw out any numbers greater than DESIRED_SUM
 input = sorted([number for number in set(numbers) if number <= DESIRED_SUM])
 input_len = len(input)
-print('input', input)
-print('input_len', input_len)
+#print('input', input)
+#print('input_len', input_len)
 
 
 def find_3_parts_sum(input, desired_sum):
