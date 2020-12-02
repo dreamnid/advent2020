@@ -39,7 +39,7 @@ def find_3_parts_sum(input, desired_sum):
     # Didn't find a result
     return None
 
-def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, addends=None, addend_idx=0) -> List[int]:
+def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, addends=None, addend_idx=0) -> Union[List[int], None]:
     """
     Find the combination of numbers in the input_list that adds up to desired_sum
 
