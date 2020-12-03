@@ -37,13 +37,12 @@ def find_trees(rows, right, down=1) -> int:
 find_trees_rows = partial(find_trees, rows)
 
 desired = [
-    find_trees_rows(1),
-    find_trees_rows(3,),
-    find_trees_rows(5,),
-    find_trees_rows(7,),
-    find_trees_rows(1,2),
+    (1, 1),
+    (3, 1),
+    (5, 1),
+    (7, 1),
+    (1, 2),
 ]
 
-res = reduce(lambda a, b: a*b, desired)
+res = reduce(lambda a, b: a*b, map(find_trees_rows, *zip(*desired)))
 print(f'Res {res}')
-    
