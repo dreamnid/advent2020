@@ -4,10 +4,8 @@ from functools import partial, reduce
 INPUT_FILE = '3-input.txt'
 #INPUT_FILE = 'example-input.txt'
 
-rows = []
 with open(INPUT_FILE) as fh:
-    for line in fh:
-        rows.append(line.strip())
+    rows = [line.strip() for line in fh]
 
 def find_trees(rows, right, down=1) -> int:
     trees = 0

@@ -4,10 +4,8 @@ import itertools
 INPUT_FILE = '3-input.txt'
 #INPUT_FILE = 'example-input.txt'
 
-rows = []
 with open(INPUT_FILE) as fh:
-    for line in fh:
-        rows.append(line.strip())
+    rows = [line.strip() for line in fh
 
 col_idx = 0
 trees = 0
