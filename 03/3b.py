@@ -14,6 +14,7 @@ def find_trees(rows, right, down=1) -> int:
     col_idx = 0
     for row_idx in range(0, len(rows), down):
         row = rows[row_idx]
+        # Enable to print debugging
         if False:
             for j in range(len(row)):
                 if j == col_idx:
