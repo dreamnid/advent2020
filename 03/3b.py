@@ -43,5 +43,7 @@ desired = [
     (1, 2),
 ]
 
-res = reduce(lambda a, b: a*b, map(partial(find_trees, rows), *zip(*desired)))
-print(f'Res {res}')
+res = list(map(partial(find_trees, rows), *zip(*desired)))
+
+print(f"Num trees {', '.join(map(str, res))}")
+print(f'Product: {reduce(lambda a, b: a*b, res)}')
