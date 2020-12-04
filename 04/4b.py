@@ -29,13 +29,13 @@ def height_checker(x: str) -> bool:
     return 150 <= measure <= 193
 
 VALIDATORS = {
-    'byr': lambda x: (x_int := int(x), 1920 <= x_int <= 2002)[1],
-    'iyr': lambda x: (x_int := int(x), 2010 <= x_int <= 2020)[1],
-    'eyr': lambda x: (x_int := int(x), 2020 <= x_int <= 2030)[1],
+    'byr': lambda x: 1920 <= int(x) <= 2002,
+    'iyr': lambda x: 2010 <= int(x) <= 2020,
+    'eyr': lambda x: 2020 <= int(x) <= 2030,
     'hgt': height_checker,
-    'hcl': lambda x: re.match(r'#[0-9,a-f]{6}', x),
+    'hcl': lambda x: bool(re.match(r'#[0-9,a-f]{6}', x)),
     'ecl': lambda x: x in ('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'),
-    'pid': lambda x: re.match(r'\d{9}$', x),
+    'pid': lambda x: bool(re.match(r'\d{9}$', x)),
 }
 
 def get_passports() -> Dict[str, str]:
@@ -60,7 +60,7 @@ for passport in get_passports():
     keys = set(passport.keys())
     if len(keys.intersection(set(VALIDATORS.keys()))) == len(VALIDATORS.keys()):
         for key, value in passport.items():
-            valid = bool(VALIDATORS.get(key, lambda x: True)(value))
+            valid = VALIDATORS.get(key, lambda x: True)(value)
             if not valid:
                 break
 
