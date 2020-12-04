@@ -58,6 +58,7 @@ passports = []
 result = 0
 for passport in get_passports():
     keys = set(passport.keys())
+    # Make sure we have all the required fields
     if len(keys.intersection(set(VALIDATORS.keys()))) == len(VALIDATORS.keys()):
         for key, value in passport.items():
             valid = VALIDATORS.get(key, lambda x: True)(value)
