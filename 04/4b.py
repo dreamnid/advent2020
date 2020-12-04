@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import sys
+from typing import Dict
 
 if not (sys.version_info.major == 3  and  sys.version_info.minor >= 8):
     print("This script requires Python 3.8 or higher")
@@ -14,9 +15,6 @@ INPUT_FILE = '4-input.txt'
 
 # Note that the input file needs to have a blank line at the end of the file
 
-passports = []
-result = 0
-
 def height_checker(x: str) -> bool:
     unit = x[-2:]
     if unit not in ['in', 'cm']:
@@ -25,13 +23,12 @@ def height_checker(x: str) -> bool:
     try:
         measure = int(x[:-2])
     except ValueError:
-        print(f'{x} is not valid number')
         return False
     if unit == 'in':
         return 59 <= measure <= 76
     return 150 <= measure <= 193
 
-validators = {
+VALIDATORS = {
     'byr': lambda x: (x_int := int(x), 1920 <= x_int <= 2002)[1],
     'iyr': lambda x: (x_int := int(x), 2010 <= x_int <= 2020)[1],
     'eyr': lambda x: (x_int := int(x), 2020 <= x_int <= 2030)[1],
@@ -41,26 +38,33 @@ validators = {
     'pid': lambda x: re.match(r'\d{9}$', x),
 }
 
-with open(INPUT_FILE) as fh:
-    tmp = {}
-    for line in fh:
-        line = line.strip()
+def get_passports() -> Dict[str, str]:
+    # Note that this depends on the file having an extra blank line at the end
 
-        if line != '':
-            for i in line.split(' '):
-                entry = i.split(':')
-                tmp[entry[0]] = entry[1]
-        else:
-            req_keys = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
-            keys = set(tmp.keys())
-            if len(keys.intersection(req_keys)) == len(req_keys):
-                for key, value in tmp.items():
-                    valid = bool(validators.get(key, lambda x: True)(value))
-                    if not valid:
-                        break
+    with open(INPUT_FILE) as fh:
+        tmp = {}
+        for line in fh:
+            line = line.strip()
 
-                if valid:
-                    result += 1
-            tmp = {}
+            if line != '':
+                for i in line.split(' '):
+                    entry = i.split(':')
+                    tmp[entry[0]] = entry[1]
+            else:
+                yield tmp
+                tmp = {}
+
+passports = []
+result = 0
+for passport in get_passports():
+    keys = set(passport.keys())
+    if len(keys.intersection(set(VALIDATORS.keys()))) == len(VALIDATORS.keys()):
+        for key, value in passport.items():
+            valid = bool(VALIDATORS.get(key, lambda x: True)(value))
+            if not valid:
+                break
+
+        if valid:
+            result += 1
 
 print(f'Result: {result}')
