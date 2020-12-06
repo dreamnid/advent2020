@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+from collections import defaultdict
+from functools import partial, reduce
+import math
+import os
+import re
+from typing import List, Set, Union
+
+# Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
+if __name__ == '__main__':
+    if __package__ is None:
+        import sys
+        from os import path
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+        # Relative imports here
+        from util import *
+
+INPUT_FILE='{level}-input.txt'
+INPUT_FILE='{level}a-example.txt'
