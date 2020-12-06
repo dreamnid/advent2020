@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import math
 
 INPUT_FILE='5-input.txt'
 #INPUT_FILE='5-example-1.txt'
