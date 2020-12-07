@@ -21,15 +21,15 @@ INPUT_FILE='7-input.txt'
 #INPUT_FILE='7a-example.txt'
 #INPUT_FILE='7b-example.txt'
 
-rules = defaultdict(lambda: defaultdict(int))
+rules = defaultdict(dict)
 for rule_text in get_file_contents(INPUT_FILE)[0]:
     rule_text_split = rule_text.split(' ')
     if len(rule_text_split) == 7:
         # Accounting for bags that don't contain other bags
         continue
 
-    for n in (zip_longest(*([iter(rule_text_split[4:])] * 4))):
-        rules['{} {}'.format(*rule_text_split[:2])]['{} {}'.format(*n[1:3])] += int(n[0])
+    rules['{} {}'.format(*rule_text_split[:2])] = {'{} {}'.format(*n[1:3]): int(n[0])
+                                                   for n in zip_longest(*([iter(rule_text_split[4:])] * 4))}
 
 def contains_shiny_gold(color: str, seen: Set[str]=None) -> bool:
     if seen is None:
