@@ -10,4 +10,4 @@ def get_file_contents(file: str) -> List[List[str]]:
     """
     with open(file) as fh:
         content = fh.read()
-        return [block.split('\n') for block in content.split('\n\n')]
+        return [block.strip().split('\n') for block in content.strip().split('\n\n')]
