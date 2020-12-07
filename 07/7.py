@@ -48,7 +48,12 @@ def contains_shiny_gold(color: str, seen: Set[str]=None) -> bool:
     return False
 
 def get_num_bags(color: str) -> int:
-    """Returns the number of bags contained inside the specified bag"""
+    """
+    Returns the number of bags contained inside the specified bag
+
+    Note that the final result will also include the bag being started with so you
+    need to subtract 1 if you only want the children count
+    """
     num_bags = 1
     for child_color, child_count in rules[color].items():
         num_bags += child_count * get_num_bags(child_color)
