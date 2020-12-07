@@ -21,6 +21,7 @@ INPUT_FILE='7-input.txt'
 #INPUT_FILE='7a-example.txt'
 #INPUT_FILE='7b-example.txt'
 
+# Using defaultdict helps simplifies future look ups for colors that are not defined
 rules = defaultdict(dict)
 for rule_text in get_file_contents(INPUT_FILE)[0]:
     rule_text_split = rule_text.split(' ')
