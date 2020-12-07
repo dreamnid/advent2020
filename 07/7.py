@@ -5,7 +5,7 @@ import math
 import os
 import re
 from itertools import zip_longest
-from typing import List, Set, Union
+from typing import Dict, List, Set, Union
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ INPUT_FILE='7-input.txt'
 #INPUT_FILE='7b-example.txt'
 
 # Using defaultdict helps simplifies future look ups for colors that are not defined
-rules = defaultdict(dict)
+rules: Dict[str, Dict[str, int]] = defaultdict(dict)
 for rule_text in get_file_contents(INPUT_FILE)[0]:
     rule_text_split = rule_text.split(' ')
     if len(rule_text_split) == 7:
