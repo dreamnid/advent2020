@@ -40,9 +40,22 @@ with open(script_file, 'w') as fh:
 os.chmod(script_file, 0o755)
 print(f'Created: {script_file}')
 
-# Create empty input file
-Path(os.path.join(level_name, '{}-input.txt'.format(level))).touch()
+# Create README
+readme_file = os.path.join(level_name, 'README.md')
+with open(readme_file, 'w') as fh:
+    template_vars = {
+        'level' : level,
+    }
+
+    with open('README.md.tmpl') as tmpl_fh:
+        contents = tmpl_fh.read().format(**template_vars)
+
+    fh.write(contents)
+print(f'Created: {readme_file}')
+
+# Create empty example input file
 Path(os.path.join(level_name, '{}a-example.txt'.format(level))).touch()
 print(f'Created dummy input files')
+
 
 print('Finished!')
