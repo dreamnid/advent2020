@@ -28,6 +28,8 @@ for rule_text in get_file_contents(INPUT_FILE)[0]:
         # Accounting for bags that don't contain other bags
         continue
 
+    # For each line, skip the first 4 elements to get to the definition of the children
+    # Each children is described in 4 elements: number of bags, description_1, description_2, 'bags'
     rules['{} {}'.format(*rule_text_split[:2])] = {'{} {}'.format(*n[1:3]): int(n[0])
                                                    for n in zip_longest(*([iter(rule_text_split[4:])] * 4))}
 
