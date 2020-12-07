@@ -31,7 +31,7 @@ for rule_text in get_file_contents(INPUT_FILE)[0]:
     for n in (zip_longest(*([iter(rule_text_split[4:])] * 4))):
         rules['{} {}'.format(*rule_text_split[:2])]['{} {}'.format(*n[1:3])] += int(n[0])
 
-def contains_shiny_gold(color, seen=None):
+def contains_shiny_gold(color: str, seen: Set[str]=None) -> bool:
     if seen is None:
         seen = set()
     seen.add(color)
@@ -44,7 +44,7 @@ def contains_shiny_gold(color, seen=None):
                     return True
     return False
 
-def get_num_bags(color):
+def get_num_bags(color: str) -> int:
     """Returns the number of bags contained inside the specified bag"""
     num_bags = 1
     for child_color, child_count in rules[color].items():
