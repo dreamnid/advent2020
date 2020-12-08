@@ -92,6 +92,7 @@ def fix_program():
             modified_program[indices[indices_idx]] = 'jmp {}'.format(line[1])
         else:
             modified_program[indices[indices_idx]] = 'nop {}'.format(line[1])
+        #print(f'modified {program[indices[indices_idx]]}; {modified_program[indices[indices_idx]]}')
 
         res = run(modified_program)
 
