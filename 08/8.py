@@ -29,56 +29,57 @@ def parse_value(value):
 
 program = get_file_contents(INPUT_FILE)[0]
 
-def run(instructions: List[str]) -> Tuple[bool, int]:
+def run(program: List[str]) -> Tuple[bool, int]:
     """
     Returns a tuple where:
       the first element indicates if the program terminated successfully and
       the second element contains the accumulator value
-    :param instructions:
+    :param program:
     :return:
     """
-    ptr = 0
+    # pc stands for program counter
+    pc = 0
     early_return = False
     acc = 0
     seen = set()
     while True:
-        if ptr in seen:
+        if pc in seen:
             # Already seen, terminate infinite loop
             early_return = True
             break
-        seen.add(ptr)
+        seen.add(pc)
         try:
-            instr, value = instructions[ptr].split(' ')
+            instr, value = program[pc].split(' ')
         except IndexError:
-            if ptr == len(program):
+            if pc == len(program):
                 # Reached the end of the program
                 break
-            print('out of bounds', ptr, len(instructions))
+            print('out of bounds', pc, len(program))
             early_return = True
             break
         # print('instr', instr, value)
         if instr == 'nop':
-            ptr += 1
+            pc += 1
             continue
         elif instr == 'acc':
             acc += parse_value(value)
             # print('acc', acc)
         elif instr == 'jmp':
-            # print('old ptr', ptr)
-            ptr += parse_value(value)
-            # print('new ptr', ptr)
+            # print('old pc', pc)
+            pc += parse_value(value)
+            # print('new pc', pc)
             continue
         else:
             print('Error - Unknown instr', instr)
             break
 
-        ptr += 1
-        if ptr >= len(program):
+        pc += 1
+        if pc >= len(program):
             break
 
     return not early_return, acc
 
-def fix_program():
+def fix_program() -> Union[None, int]:
     indices = [i for i, x in enumerate(program) if x.split(' ')[0] in ('nop', 'jmp')]
     indices_idx = 0
 
