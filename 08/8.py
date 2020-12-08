@@ -54,6 +54,7 @@ def run(instructions: List[str]) -> Tuple[bool, int]:
                 # Reached the end of the program
                 break
             print('out of bounds', ptr, len(instructions))
+            early_return = True
             break
         # print('instr', instr, value)
         if instr == 'nop':
