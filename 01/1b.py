@@ -69,7 +69,7 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
     for input in input_list:
         addends[addend_idx] = input
 
-        if sum(addends[:addend_idx]) > DESIRED_SUM:
+        if sum(addends[:addend_idx]) > desired_sum:
             # sum is too large, so don't need to recurse again since the rest of the list is bigger
             return None
         temp_res = find_var_parts_sum(input_list[1:], desired_sum, num_addends=num_addends, addends=addends, addend_idx=addend_idx+1)
