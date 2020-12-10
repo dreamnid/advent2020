@@ -59,10 +59,12 @@ def combinations1(idx=0, buffer=None, seen=None):
         #print('early seen, returning', seen[content[idx]])
         return seen[content[idx]]
 
+    # buffer is only used for debugging purposes
     if not buffer:
         buffer = [content[idx]]
     else:
         buffer.append(content[idx])
+
     while True:
         candidates = [num for num in content[idx+1:idx+4] if num - content[idx] < 4]
         #print('idx', idx, 'content', content[idx], 'buffer', buffer, candidates)
@@ -73,6 +75,7 @@ def combinations1(idx=0, buffer=None, seen=None):
             buffer.append(cur)
 
             if cur == device:
+                # Completed the chain so return 1 to indicate 1 path found
                 seen[content[idx]] = 1
                 return 1
         elif len(candidates) == 0:
@@ -80,11 +83,15 @@ def combinations1(idx=0, buffer=None, seen=None):
             return 0
         else:
             #print('buffer', buffer, 'candi', candidates, '---------------------')
-            rec = [combinations1(content.index(candidate, idx), buffer.copy(), seen) for candidate in candidates]
-            sum_rec = sum(rec)
-            seen[content[idx]] = sum_rec
+
+            # Since we have more than one possibilities, we need to continue down the chain for each candidate
+            paths = [combinations1(content.index(candidate, idx), buffer.copy(), seen) for candidate in candidates]
+            num_paths = sum(paths)
+            seen[content[idx]] = num_paths
+
             #print('total', total, 'rec:', rec, 'seen', seen, '*********************************')
-            return sum_rec
+
+            return num_paths
         idx += 1
 
         if idx > len(content):
