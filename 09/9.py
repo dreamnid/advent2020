@@ -46,3 +46,4 @@ for t in range(len(content)-PREAMBLE_COUNT):
             if sum(buffer[i:j]) == target:
                 print('Found!', buffer[i:j], 'min+max:', min(buffer[i:j]) + max(buffer[i:j]))
                 sys.exit(0)
+
