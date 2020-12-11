@@ -45,26 +45,28 @@ def get_adjacent(input, row: int, col: int):
             res.append(input[row+i][col+j])
     return res
 
-def find_first_non_empty(input: List[List[str]], row: int, col: int, row_mul: int, col_mul: int) -> Union[str, None]:
+def find_first_non_empty(input: List[List[str]], row: int, col: int, row_delta: int, col_delta: int) -> Union[str, None]:
     """
     Find the first non floor neighbor (i.e. not a '.')
 
-    row_mul and col_mul is used to specify the direction to search in.
-    For example, if both row_mul and col_mul are 1, it will search down-right (diagonal)
+    row_delta and col_delta is used to specify the direction to search in.
+    For example, if both row_dleta and col_delta are 1, it will search down-right (diagonal)
     from the given row, col position
 
     :param input: The input to search
     :param row: The row index in input to search from
     :param col: The column index in input to search from
-    :param row_mul: Either -1, 0, or 1
-    :param col_mul: Either -1, 0, or 1
+    :param row_delta: What the row index should be incremented by on each step
+    :param col_delta: What the column index should be incremented by on each step
     :return:
     """
     max_dim = max(total_rows, total_cols)
+    tmp_row = row
+    tmp_col = col
     for i in range(1, max_dim):
-        tmp_row = row + i*row_mul
+        tmp_row += row_delta
         if 0 <= tmp_row < total_rows:
-            tmp_col = col + i*col_mul
+            tmp_col += col_delta
             if 0 <= tmp_col < total_cols:
                 tmp_loc = input[tmp_row][tmp_col]
                 if tmp_loc != '.':
