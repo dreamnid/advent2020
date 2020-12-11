@@ -6,6 +6,7 @@ import math
 import os
 import pprint
 import re
+from time import time
 from typing import Dict, List, Set, Union
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
@@ -112,8 +113,12 @@ def process(input, finder_func, num_occupied_seats):
         round += 1
     return result
 
+start = time()
 print(sum([seat == '#' for row in process(input, get_adjacent, 4) for seat in row]))
+startb = time()
+print('a timing: ', startb - start)
 print(sum([seat == '#' for row in process(input, get_first_non_floor, 5) for seat in row]))
-#print(get_first_non_floor(input, 0, 0))
-
+print('b timing: ', time() - startb)
+print()
+print('overall timing:', time() - start)
 
