@@ -2,7 +2,6 @@
 from collections import defaultdict
 import copy
 from functools import partial, reduce
-import json
 import math
 import os
 import pprint
@@ -84,9 +83,6 @@ def get_first_non_floor(input, row: int, col: int):
     return [val for i in range(-1, 2) for j in range(-1, 2)
             if (not (i == j == 0)) and (val := find_first_non_empty(input, row, col, i, j)) is not None]
 
-def deep_copy_json(input):
-    # Uses json to deep copy
-    return json.loads(json.dumps(input))
 
 def process(input, finder_func, num_occupied_seats):
     round = 0

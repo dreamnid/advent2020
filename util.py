@@ -1,3 +1,4 @@
+import json
 from typing import List, Union
 
 def get_file_contents(file: str) -> List[List[str]]:
@@ -57,3 +58,8 @@ def find_var_parts_sum(input_list: List[int], desired_sum: int, num_addends=3, a
 
     # Didn't find a result
     return None
+
+
+def deep_copy_json(input):
+    # Uses json to deep copy
+    return json.loads(json.dumps(input))
