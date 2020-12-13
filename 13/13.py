@@ -6,7 +6,7 @@ from operator import mul
 import os
 import re
 from time import time
-from typing import Dict, List, Set, Union
+from typing import Dict, List, Set, Tuple, Union
 
 import humanize
 
@@ -60,15 +60,19 @@ def b():
     else:
         return None
 
-def find_best_step_size(bus_schedule):
+def find_best_step_size(bus_schedule: Dict[int, int]) -> Tuple[int, int]:
     """
     Returns the best step size
 
     Look for buses that departs at the same time. The step size will be the products of the bus interval.
-    We
+    We also need to return the offset in order to get back to the reference time (referred to as 't' in the puzzle)
+
     :param bus_schedule: a dictionary of time offset -> time interval
     :return: a list of tuple pairs where each pair is the the time offset and the increment
     """
+
+    # Thanks to YufeiG for expanding on my observation that step size should be the product of the common bus departure time
+    # Was only able to do it for the simplest case of the first bus and the bus that it reference as described in the puzzle
     results = [
         (offset, bus_interval * reduce(mul, [cur_bus_interval for cur_offset, cur_bus_interval in bus_schedule.items()
                                              if offset != cur_offset and abs(offset - cur_offset) == cur_bus_interval],
@@ -77,7 +81,7 @@ def find_best_step_size(bus_schedule):
     return sorted(results, key=lambda x: x[1], reverse=True)[0]
 
 
-def finder(start_time, increment, subtract, bus_schedule):
+def finder(start_time: int, increment: int, subtract: int, bus_schedule: Dict[int, int]) -> int:
     time = start_time
     cur_time = 0
     try:
@@ -86,6 +90,8 @@ def finder(start_time, increment, subtract, bus_schedule):
                 print(humanize.intcomma(cur_time))
             #print(time)
             found = True
+            # Since cur_time is the product of common departure times, need to back out to
+            # get back to 't'
             cur_time = time - subtract
             for offset, bus_itr in bus_schedule.items():
                 found &= ((cur_time + offset) % bus_itr) == 0
