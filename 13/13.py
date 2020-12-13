@@ -27,6 +27,34 @@ INPUT_FILE='13-input.txt'
 inputs = [line for line in get_file_contents(INPUT_FILE)[0]]
 desired_time = int(inputs[0])
 
+def yufei_find_step_size(bus_and_offset):
+    # Ref: https://github.com/YufeiG/adventofcode2020/blob/46e50685581fb004daa3d3ddf2e5527fa73e6ce0/script13.py#L23
+    largest_step_size = None
+    largest_step_size_i = None
+    for (reference_i, reference_bus) in bus_and_offset:
+        bus_numbers_that_leave_with_reference_bus = []
+        for (i, bus) in bus_and_offset:
+            if i == reference_i:
+                continue
+            if abs(reference_i - i) == bus:
+                print('Yuf found', reference_i, reference_bus, i, bus)
+                bus_numbers_that_leave_with_reference_bus.append(bus)
+        step = reference_bus * yufei_multiply_list(bus_numbers_that_leave_with_reference_bus)
+        print('Yuf simul buses', reference_i, reference_bus, bus_numbers_that_leave_with_reference_bus, step)
+        if largest_step_size is None or largest_step_size < step:
+            largest_step_size = step
+            largest_step_size_i = reference_i
+
+    return largest_step_size, largest_step_size_i
+
+def yufei_multiply_list(myList) :
+    # Ref: https://github.com/YufeiG/adventofcode2020/blob/46e50685581fb004daa3d3ddf2e5527fa73e6ce0/script13.py#L4
+    # Multiply elements one by one
+    result = 1
+    for x in myList:
+         result = result * x
+    return result
+
 def a():
     min_diff = None
     best_bus = None
@@ -49,7 +77,11 @@ def b():
         if bus_itr+offset in bus_schedule:
             any_simulatenous_buses.append((bus_itr+offset, bus_schedule[bus_itr+offset]))
 
-    print(any_simulatenous_buses)
+    print('Simultaneous bus', any_simulatenous_buses)
+    print('Yuf step size & i', yufei_find_step_size(bus_schedule.items()))
+
+
+    return
     try:
         increment = any_simulatenous_buses[0][0] * any_simulatenous_buses[0][1]
         diff=any_simulatenous_buses[0][0]
@@ -124,3 +156,4 @@ def b_debug():
         print()
 
 #b_debug()
+
