@@ -113,6 +113,9 @@ print()
 print('overall timing:', time() - start)
 
 def b_debug():
+    """
+    Prints out a debug view of time stamps and if a bus will depart on that time
+    """
     input_split = inputs[1].split(',')
     print(len(input_split), input_split)
     bus_schedule = {i:int(x) for i, x in enumerate(input_split) if x != 'x'}
