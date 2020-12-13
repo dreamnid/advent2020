@@ -2,6 +2,7 @@
 from collections import defaultdict
 from functools import partial, reduce
 import math
+from operator import mul
 import os
 import re
 from time import time
@@ -23,37 +24,11 @@ INPUT_FILE='13-input.txt'
 #INPUT_FILE='13a-example.txt'
 #INPUT_FILE='13b-example.txt'
 #INPUT_FILE='13c-example.txt'
+#INPUT_FILE='13d-example.txt'
+#INPUT_FILE='13e-example.txt'
 
 inputs = [line for line in get_file_contents(INPUT_FILE)[0]]
 desired_time = int(inputs[0])
-
-def yufei_find_step_size(bus_and_offset):
-    # Ref: https://github.com/YufeiG/adventofcode2020/blob/46e50685581fb004daa3d3ddf2e5527fa73e6ce0/script13.py#L23
-    largest_step_size = None
-    largest_step_size_i = None
-    for (reference_i, reference_bus) in bus_and_offset:
-        bus_numbers_that_leave_with_reference_bus = []
-        for (i, bus) in bus_and_offset:
-            if i == reference_i:
-                continue
-            if abs(reference_i - i) == bus:
-                print('Yuf found', reference_i, reference_bus, i, bus)
-                bus_numbers_that_leave_with_reference_bus.append(bus)
-        step = reference_bus * yufei_multiply_list(bus_numbers_that_leave_with_reference_bus)
-        print('Yuf simul buses', reference_i, reference_bus, bus_numbers_that_leave_with_reference_bus, step)
-        if largest_step_size is None or largest_step_size < step:
-            largest_step_size = step
-            largest_step_size_i = reference_i
-
-    return largest_step_size, largest_step_size_i
-
-def yufei_multiply_list(myList) :
-    # Ref: https://github.com/YufeiG/adventofcode2020/blob/46e50685581fb004daa3d3ddf2e5527fa73e6ce0/script13.py#L4
-    # Multiply elements one by one
-    result = 1
-    for x in myList:
-         result = result * x
-    return result
 
 def a():
     min_diff = None
@@ -67,28 +42,8 @@ def a():
 
 def b():
     input_split = inputs[1].split(',')
-    print(len(input_split), input_split)
     bus_schedule = {i:int(x) for i, x in enumerate(input_split) if x != 'x'}
-    print(bus_schedule)
-
-
-    any_simulatenous_buses = []
-    for offset, bus_itr in bus_schedule.items():
-        if bus_itr+offset in bus_schedule:
-            any_simulatenous_buses.append((bus_itr+offset, bus_schedule[bus_itr+offset]))
-
-    print('Simultaneous bus', any_simulatenous_buses)
-    print('Yuf step size & i', yufei_find_step_size(bus_schedule.items()))
-
-
-    return
-    try:
-        increment = any_simulatenous_buses[0][0] * any_simulatenous_buses[0][1]
-        diff=any_simulatenous_buses[0][0]
-    except:
-        increment = bus_schedule[0]
-        diff = 0
-    print(increment)
+    diff, increment = find_best_step_size(bus_schedule)
 
     time = 100000000000000
     #time = 0
@@ -96,14 +51,31 @@ def b():
         if time % increment == 0:
             break
         time += 1
-    print('starting at ', time)
+    print(f'starting at {time} with increment {increment} and diff {diff}')
 
     cur_time = finder(time, increment, diff, bus_schedule)
 
     if cur_time:
-        print('answer:', cur_time)
+        return cur_time
     else:
-        print('nope')
+        return None
+
+def find_best_step_size(bus_schedule):
+    """
+    Returns the best step size
+
+    Look for buses that departs at the same time. The step size will be the products of the bus interval.
+    We
+    :param bus_schedule: a dictionary of time offset -> time interval
+    :return: a list of tuple pairs where each pair is the the time offset and the increment
+    """
+    results = [
+        (offset, bus_interval * reduce(mul, [cur_bus_interval for cur_offset, cur_bus_interval in bus_schedule.items()
+                                             if offset != cur_offset and abs(offset - cur_offset) == cur_bus_interval],
+                                       1)) for offset, bus_interval in bus_schedule.items()]
+    # Need to find the largest step size
+    return sorted(results, key=lambda x: x[1], reverse=True)[0]
+
 
 def finder(start_time, increment, subtract, bus_schedule):
     time = start_time
@@ -130,8 +102,15 @@ def finder(start_time, increment, subtract, bus_schedule):
         return None
 
     return cur_time
-#a()
-b()
+
+start = time()
+print('Part a', a())
+startb = time()
+print('a timing: ', startb - start)
+print('Part b ts: ', b())
+print('b timing: ', time() - startb)
+print()
+print('overall timing:', time() - start)
 
 def b_debug():
     input_split = inputs[1].split(',')
