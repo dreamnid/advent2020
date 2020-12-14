@@ -68,8 +68,10 @@ def run_mask_addr():
                 # Have to reverse iteration for j to access the lowest bytes first
                 for j, float_bit in enumerate(reversed(floating_bits)):
                     if i & (1 << j):
+                        # Value is positive so need to set bit
                         addr |= 1 << len(cur_mask) - 1 - float_bit
                     else:
+                        # Value is 0, so need to unset bit
                         addr &= ~(1 << len(cur_mask) - 1 - float_bit)
 
                     #print(i, j, float_bit, 'addr {:036b} {}'.format(addr, addr))
