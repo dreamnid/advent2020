@@ -46,13 +46,6 @@ def b():
     diff, increment = find_best_step_size(bus_schedule)
 
     time = 0
-    # time = 100000000000000
-    # while True:
-    #     if time % increment == 0:
-    #         break
-    #     time += 1
-    print(f'starting at {time} with increment {increment} and diff {diff}')
-
     cur_time = finder(time, increment, diff, bus_schedule)
 
     if cur_time:
