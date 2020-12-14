@@ -61,9 +61,9 @@ def run_mask_addr():
 
             floating_bits = [idx for idx, value in enumerate(cur_mask) if value == 'X']
             for i in range(int(math.pow(2, len(floating_bits)))):
-                i_bin_str = '{:036b}'.format(i)
+                # Since the mask will only ensure ones in the mask are set in the address,
+                # pretend the 'X' are 1s since we'll handle the floating bits next
                 addr = int(found.group(1)) | int(cur_mask.replace('X', '1'), base=2)
-                #print('old addr str', addr, i_bin_str)
 
                 # Have to reverse iteration for j to access the lowest bytes first
                 for j, float_bit in enumerate(reversed(floating_bits)):
