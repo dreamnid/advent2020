@@ -36,7 +36,7 @@ ASSIGNMENT_MATCH = re.compile(r'mem\[([\d]+)\] = ([\d]+)')
 def run_mask_value():
     cur_mask_or = None
     cur_mask_and = None
-    memory = defaultdict(int)
+    memory = {}
     for line in input:
         if line.startswith(('mask')):
             cur_mask_or, cur_mask_and = parse_mask(line[7:])
@@ -48,9 +48,10 @@ def run_mask_value():
             #print(addr, found.group(2), memory[addr])
     return sum(memory.values())
 
+
 def run_mask_addr():
     cur_mask = None
-    memory = defaultdict(int)
+    memory = {}
     for line in input:
         if line.startswith(('mask')):
             cur_mask = line[7:]
