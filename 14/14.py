@@ -22,17 +22,17 @@ if __name__ == '__main__':
 
 INPUT_FILE='14-input.txt'
 #INPUT_FILE='14a-example.txt'
-INPUT_FILE='14b-example.txt'
+#INPUT_FILE='14b-example.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 
-prog = re.compile(r'mem\[([\d]+)\] = ([\d]+)')
 def parse_mask(cur_mask: str) -> Tuple[int, int]:
     cur_mask_or = int(cur_mask.replace('X', '0'), base=2)
     cur_mask_and = int(cur_mask.replace('X', '1'), base=2)
 
     return cur_mask_or, cur_mask_and
 
+ASSIGNMENT_MATCH = re.compile(r'mem\[([\d]+)\] = ([\d]+)')
 def run_mask_value():
     cur_mask_or = None
     cur_mask_and = None
@@ -42,7 +42,7 @@ def run_mask_value():
             cur_mask_or, cur_mask_and = parse_mask(line[7:])
             #print('new mask', cur_mask_or, cur_mask_and)
         else:
-            found = prog.match(line)
+            found = ASSIGNMENT_MATCH.match(line)
             addr = int(found.group(1))
             memory[addr] = int(found.group(2)) & cur_mask_and | cur_mask_or
             #print(addr, found.group(2), memory[addr])
@@ -56,7 +56,7 @@ def run_mask_addr():
             cur_mask = line[7:]
             #print('mask', cur_mask)
         else:
-            found = prog.match(line)
+            found = ASSIGNMENT_MATCH.match(line)
             value = int(found.group(2))
 
             floating_bits = [idx for idx, value in enumerate(cur_mask) if value == 'X']
