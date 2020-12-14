@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
 INPUT_FILE='14-input.txt'
 #INPUT_FILE='14a-example.txt'
-#INPUT_FILE='14b-example.txt'
+INPUT_FILE='14b-example.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 
@@ -61,21 +61,19 @@ def run_mask_addr():
 
             floating_bits = [idx for idx, value in enumerate(cur_mask) if value == 'X']
             for i in range(int(math.pow(2, len(floating_bits)))):
-                #print('b {:036b}'.format(i))
                 i_bin_str = '{:036b}'.format(i)
                 addr = int(found.group(1)) | int(cur_mask.replace('X', '1'), base=2)
-                addr_str = list('{:36b}'.format(addr))
-                #print('old addr str', addr, i_bin_str)
+                print('old addr str', addr, i_bin_str)
 
-                # Convert to string to do bit manipulation
                 # Have to reverse iteration for j to access the lowest bytes first
                 for j, float_bit in enumerate(reversed(floating_bits)):
-                    #print(float_bit, -j, len(i_bin_str)-1-j, i_bin_str[len(i_bin_str)-1-j])
-                    addr_str[float_bit] = i_bin_str[len(i_bin_str)-1-j]
+                    if i & (1 << j):
+                        addr |= 1 << len(cur_mask) - 1 - float_bit
+                    else:
+                        addr &= ~(1 << len(cur_mask) - 1 - float_bit)
 
-                #print(''.join(addr_str))
-                addr = int(''.join(addr_str), base=2)
-                #print('Addr     {:036b}'.format(int(found.group(1))))
+                    #print(i, j, float_bit, 'addr {:036b} {}'.format(addr, addr))
+
                 #print('new addr {:036b} {}'.format(addr, addr))
                 memory[addr] = value
     return sum(memory.values())
