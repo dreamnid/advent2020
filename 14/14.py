@@ -27,26 +27,25 @@ INPUT_FILE='14-input.txt'
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 
 prog = re.compile(r'mem\[([\d]+)\] = ([\d]+)')
-def parse_mask(cur_mask):
+def parse_mask(cur_mask: str) -> Tuple[int, int]:
     cur_mask_or = int(cur_mask.replace('X', '0'), base=2)
     cur_mask_and = int(cur_mask.replace('X', '1'), base=2)
 
-    return cur_mask_or, cur_mask_and, cur_mask
+    return cur_mask_or, cur_mask_and
 
 def run_mask_value():
     cur_mask_or = None
     cur_mask_and = None
-    cur_mask = None
     memory = defaultdict(int)
     for line in input:
         if line.startswith(('mask')):
-            cur_mask_or, cur_mask_and, cur_mask = parse_mask(line[7:])
-            print('new mask', cur_mask_or, cur_mask_and)
+            cur_mask_or, cur_mask_and = parse_mask(line[7:])
+            #print('new mask', cur_mask_or, cur_mask_and)
         else:
             found = prog.match(line)
             addr = int(found.group(1))
             memory[addr] = int(found.group(2)) & cur_mask_and | cur_mask_or
-            print(addr, found.group(2), memory[addr])
+            #print(addr, found.group(2), memory[addr])
     return sum(memory.values())
 
 def run_mask_addr():
@@ -54,32 +53,32 @@ def run_mask_addr():
     memory = defaultdict(int)
     for line in input:
         if line.startswith(('mask')):
-            cur_mask_or, cur_mask_and, cur_mask = parse_mask(line[7:])
-            print('new mask', cur_mask_or, cur_mask_and)
+            cur_mask = line[7:]
+            #print('mask', cur_mask)
         else:
             found = prog.match(line)
             value = int(found.group(2))
 
             floating_bits = [idx for idx, value in enumerate(cur_mask) if value == 'X']
             for i in range(int(math.pow(2, len(floating_bits)))):
-                print('b {:036b}'.format(i))
+                #print('b {:036b}'.format(i))
                 i_bin_str = '{:036b}'.format(i)
                 addr = int(found.group(1)) | int(cur_mask.replace('X', '1'), base=2)
                 addr_str = list('{:36b}'.format(addr))
                 #print('old addr str', addr, i_bin_str)
-                for j, float_bit in enumerate(floating_bits):
-                    print(float_bit, -i, i_bin_str[-j])
+
+                # Convert to string to do bit manipulation
+                # Have to reverse iteration for j to access the lowest bytes first
+                for j, float_bit in enumerate(reversed(floating_bits)):
+                    #print(float_bit, -j, len(i_bin_str)-1-j, i_bin_str[len(i_bin_str)-1-j])
                     addr_str[float_bit] = i_bin_str[len(i_bin_str)-1-j]
 
-                addr = int(''.join(addr_str), 2)
-                #print('new addr_str', addr_str)
-
+                #print(''.join(addr_str))
+                addr = int(''.join(addr_str), base=2)
                 #print('Addr     {:036b}'.format(int(found.group(1))))
                 #print('new addr {:036b} {}'.format(addr, addr))
                 memory[addr] = value
-
-            print(addr, found.group(1), memory[addr], floating_bits)
     return sum(memory.values())
 
-print(run_mask_value())
-print(run_mask_addr())
+print('a: ', run_mask_value())
+print('b: ', run_mask_addr())
