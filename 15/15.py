@@ -25,20 +25,19 @@ INPUT_FILE='15-input.txt'
 
 input = [int(num) for num in get_file_contents(INPUT_FILE)[0][0].split(',')]
 
-
 def nth_num_spoken(num:int) -> int:
     seen = {num:idx for idx, num in enumerate(input[0:-1])}
     new = input[-1]
+    cur_num = input[-1]
     for i in range(len(input), num):
-        cur_num = input[-1]
         if cur_num in seen and seen[cur_num] != (i-1):
-            input.append(i - seen[cur_num] - 1)
+            cur_num = i - seen[cur_num] - 1
         else:
-            input.append(0)
+            cur_num = 0
 
         seen[new] = i - 1
-        new = input[-1]
-    return input[-1]
+        new = cur_num
+    return cur_num
 
 start = time()
 print('2020th number spoken:', nth_num_spoken(2020))
