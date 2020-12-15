@@ -21,7 +21,7 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='15-input.txt'
-INPUT_FILE='15a-example.txt'
+#INPUT_FILE='15a-example.txt'
 
 input = [int(num) for num in get_file_contents(INPUT_FILE)[0][0].split(',')]
 
