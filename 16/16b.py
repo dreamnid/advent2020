@@ -25,7 +25,7 @@ INPUT_FILE='16-input.txt'
 #INPUT_FILE='16b-example.txt'
 
 rules_input = [line for line in get_file_contents(INPUT_FILE)[0]]
-mine = [[int(x) for x in line.split(',')] for line in get_file_contents(INPUT_FILE)[1][1:]]
+mine = [int(x) for x in get_file_contents(INPUT_FILE)[1][1].split(',')]
 others = [[int(x) for x in line.split(',')] for line in get_file_contents(INPUT_FILE)[2][1:]]
 
 ranges_regex = re.compile(r' ([0-9]+)-([0-9]+) or ([0-9]+)-([0-9]+)$')
@@ -37,10 +37,8 @@ for cur_line in rules_input:
     ranges = [int(ranges_match.group(i)) for i in range(1, 5)]
     rules[type] = ranges
 
-field_idx: Dict[str, int] = {}
 not_valid = []
 valid_tickets = []
-not_valid_rule = defaultdict(set)
 valid_rule = defaultdict(set)
 
 # Get rid of bad tickets
@@ -62,7 +60,7 @@ for cur_ticket in others:
         valid_tickets.append(cur_ticket)
 
 # Group all the field values together. The ith element in the list contains the ith value in all the tickets
-fields_values = [sorted(list(i)) for i in zip(*(mine+valid_tickets))]
+fields_values = [sorted(list(i)) for i in zip(*([mine]+valid_tickets))]
 
 print('pos | values for that position')
 for i, row in enumerate(fields_values):
@@ -103,6 +101,7 @@ print()
 print('Possible rules per position')
 for i, pos in enumerate(pos_to_rule_poss):
     print(f'{i:03d} | ', ', '.join(sorted(list(pos))))
+print()
 
 def finder(assigned=None, used=None):
     if assigned is None:
@@ -142,9 +141,8 @@ def finder(assigned=None, used=None):
         if sum([rule is None for rule in assigned]) == 0:
             return assigned
 
-print()
 assigned = finder()
-mine = mine[0]
+print(assigned)
 answer_b = [field_value for i, field_value in enumerate(mine) if assigned[i].startswith('departure')]
 
 print('part b:', answer_b, reduce(mul, answer_b, 1))
