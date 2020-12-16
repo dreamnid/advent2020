@@ -37,27 +37,17 @@ for cur_line in rules_input:
     ranges = [int(ranges_match.group(i)) for i in range(1, 5)]
     rules[type] = ranges
 
-not_valid = []
 valid_tickets = []
 valid_rule = defaultdict(set)
 
-# Get rid of bad tickets
-for cur_ticket in others:
-    ticket_valid = True
-    for pos, number in enumerate(cur_ticket):
-        valid = False
-
-        for rule, constraints in rules.items():
-            valid |= (constraints[0] <= number <= constraints[1]) or (constraints[2] <= number <= constraints[3])
-            #print(number, valid)
-
-        if not valid:
-            not_valid.append(number)
-            ticket_valid = False
-            break
-
-    if ticket_valid:
-        valid_tickets.append(cur_ticket)
+# Get rid of bad tickets by looking for values in a ticket that doesn't match any rule.
+# The any says that number in a ticket can match any rule
+# The all says all numbers in the ticket must at least match one rule
+valid_tickets = [cur_ticket for cur_ticket in others if
+                 all([any(
+                     [(constraints[0] <= number <= constraints[1]) or (constraints[2] <= number <= constraints[3]) for
+                      constraints in rules.values()])
+                      for number in cur_ticket])]
 
 # Group all the field values together. The ith element in the list contains the ith value in all the tickets
 fields_values = [sorted(list(i)) for i in zip(*([mine]+valid_tickets))]
@@ -71,7 +61,6 @@ for i, row in enumerate(fields_values):
 
 pos_to_rule_poss = [set() for i in range(len(rules))]
 count = 0
-
 for rule, constraints in rules.items():
     for pos, cur_field_values in enumerate(fields_values):
         valid = True
@@ -119,9 +108,9 @@ def finder(assigned:List[str]=None, used:Set[str]=None) -> List[str]:
     if sum([rule is None for rule in assigned]) == 0:
         return assigned
     while True:
-        poss_to_use = [None]*len(rules) # Since we're trying to minimize this, set the initial value to the max size
+        possibles_to_use = [None]*len(rules) # Since we're trying to minimize this, set the initial value to the max size
         least_poss_idx = None
-        # Find position with smallest set
+        # Find index with smallest set of possibilities
         for i, possibles in enumerate(pos_to_rule_poss):
             if assigned[i]:
                 continue
@@ -129,16 +118,16 @@ def finder(assigned:List[str]=None, used:Set[str]=None) -> List[str]:
             if len(modified_pos) == 0:
                 # Nothing available to use - so this is not the right path
                 return
-            elif len(modified_pos) < len(poss_to_use) and assigned[i] is None:
-                poss_to_use = modified_pos
+            elif len(modified_pos) < len(possibles_to_use) and assigned[i] is None:
+                possibles_to_use = modified_pos
                 least_poss_idx = i
 
-        if len(poss_to_use) == 1:
-            assigned[least_poss_idx] = poss_to_use.pop()
+        if len(possibles_to_use) == 1:
+            assigned[least_poss_idx] = possibles_to_use.pop()
             used.add(assigned[least_poss_idx])
         else:
             # Recurse for each possibility
-            for poss_rule2 in poss_to_use:
+            for poss_rule2 in possibles_to_use:
                 assigned2 = assigned.copy()
                 assigned2[least_poss_idx] = poss_rule2
                 used2 = used.copy()
