@@ -103,7 +103,14 @@ for i, pos in enumerate(pos_to_rule_poss):
     print(f'{i:03d} | ', ', '.join(sorted(list(pos))))
 print()
 
-def finder(assigned=None, used=None):
+def finder(assigned:List[str]=None, used:Set[str]=None) -> List[str]:
+    """
+    Returns the fields for each index of the list
+
+    :param assigned:
+    :param used:
+    :return:
+    """
     if assigned is None:
         assigned = [None] * len(rules)
     if used is None:
@@ -112,26 +119,28 @@ def finder(assigned=None, used=None):
     if sum([rule is None for rule in assigned]) == 0:
         return assigned
     while True:
+        poss_to_use = [None]*len(rules) # Since we're trying to minimize this, set the initial value to the max size
+        least_poss_idx = None
         # Find position with smallest set
-        value_to_beat = [None]*len(rules)
-        least_pos = None
-        for i, pos in enumerate(pos_to_rule_poss):
+        for i, possibles in enumerate(pos_to_rule_poss):
             if assigned[i]:
                 continue
-            modified_pos = pos - used
+            modified_pos = possibles - used
             if len(modified_pos) == 0:
+                # Nothing available to use - so this is not the right path
                 return
-            elif len(modified_pos) < len(value_to_beat) and assigned[i] is None:
-                value_to_beat = modified_pos
-                least_pos = i
+            elif len(modified_pos) < len(poss_to_use) and assigned[i] is None:
+                poss_to_use = modified_pos
+                least_poss_idx = i
 
-        if len(value_to_beat) == 1:
-            assigned[least_pos] = value_to_beat.pop()
-            used.add(assigned[least_pos])
+        if len(poss_to_use) == 1:
+            assigned[least_poss_idx] = poss_to_use.pop()
+            used.add(assigned[least_poss_idx])
         else:
-            for poss_rule2 in value_to_beat:
+            # Recurse for each possibility
+            for poss_rule2 in poss_to_use:
                 assigned2 = assigned.copy()
-                assigned2[least_pos] = poss_rule2
+                assigned2[least_poss_idx] = poss_rule2
                 used2 = used.copy()
                 used2.add(poss_rule2)
                 res = finder(assigned2, used2)
