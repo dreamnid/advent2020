@@ -3,8 +3,13 @@
 import argparse
 import os
 from pathlib import Path
+import requests
 import sys
 
+if os.path.isfile(os.path.join(os.path.dirname(__file__), 'settings.py')):
+    from .settings import *
+else:
+    AOC_SESSION_COOKIE = None
 
 parser = argparse.ArgumentParser(description='Create a level')
 parser.add_argument('level', type=int)
@@ -57,5 +62,14 @@ print(f'Created: {readme_file}')
 Path(os.path.join(level_name, '{}a-example.txt'.format(level))).touch()
 print(f'Created dummy input files')
 
+if AOC_SESSION_COOKIE:
+    response = requests.get(f'https://adventofcode.com/2020/day/{day}/input', cookies={'session': AOC_SESSION_COOKIE})
+    if response.status_code == 200:
+        with open(os.path.join(level_name, f'{day}-input.txt'), 'w') as fh:
+            fh.write(response.content)
+    print('Level input file downloaded')
+else:
+    print('AOC_SESSION_COOKIE not defined, so can\'t auto download input file')
+    print('This can be found while logged into the AoC website using the browser development console. Need the value of the session cookie')
 
 print('Finished!')
