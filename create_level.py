@@ -7,7 +7,7 @@ import requests
 import sys
 
 if os.path.isfile(os.path.join(os.path.dirname(__file__), 'settings.py')):
-    from .settings import *
+    from settings import *
 else:
     AOC_SESSION_COOKIE = None
 
@@ -63,10 +63,10 @@ Path(os.path.join(level_name, '{}a-example.txt'.format(level))).touch()
 print(f'Created dummy input files')
 
 if AOC_SESSION_COOKIE:
-    response = requests.get(f'https://adventofcode.com/2020/day/{day}/input', cookies={'session': AOC_SESSION_COOKIE})
+    response = requests.get(f'https://adventofcode.com/2020/day/{level}/input', cookies={'session': AOC_SESSION_COOKIE})
     if response.status_code == 200:
-        with open(os.path.join(level_name, f'{day}-input.txt'), 'w') as fh:
-            fh.write(response.content)
+        with open(os.path.join(level_name, f'{level}-input.txt'), 'w') as fh:
+            fh.write(response.text)
     print('Level input file downloaded')
 else:
     print('AOC_SESSION_COOKIE not defined, so can\'t auto download input file')
