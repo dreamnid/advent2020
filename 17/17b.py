@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 from collections import defaultdict
+import copy
 from functools import partial, reduce
+import itertools
 import math
 from operator import mul
 import os
 import re
 from time import time
-from typing import Dict, List, Set, Tuple, Union
+from typing import Any, Dict, List, Set, Tuple, Union
 
 from humanize import intcomma
-import copy
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
@@ -24,10 +25,16 @@ if __name__ == '__main__':
 INPUT_FILE='17-input.txt'
 #INPUT_FILE='17a-example.txt'
 
+# Number of dimensions
+DIM = 4
+
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 size = len(input)
 
-def print_grid(grid):
+def create_nth_dimension_array(size: int, dim=2, initial=False):
+    return reduce(lambda x, y: [copy.deepcopy(x) if isinstance(x, list) else x for i in range(size)], range(dim), initial)
+
+def print_grid_4d(grid):
     for i in range(size):
         for j in range(size):
             print(f'z={j}, w={i}')
@@ -38,7 +45,7 @@ def print_grid(grid):
             print()
             print()
 
-grid = [[[[False for i in range(size)] for i in range(size)] for i in range(size)] for i in range(size)]
+grid = create_nth_dimension_array(size, DIM)
 
 for i, row in enumerate(input):
     for j, val in enumerate(row):
@@ -46,38 +53,35 @@ for i, row in enumerate(input):
 
 #print_grid(grid)
 
-def get_adjacent(input, row: int, col: int, dep: int, four: int):
+def get_adjacent(input, *args, **kwargs) -> List[Any]:
+    if 'idx' in kwargs:
+        idx = kwargs['idx']
+    else:
+        idx = []
+
     res = []
     for i in range(-1, 2):
-        #print('i', i, row + i)
-        if not (0 <= row + i < size):
+        if not (0 <= args[len(idx)] + i < size):
             continue
 
-        for j in range(-1, 2):
-            #print('j', j, col + j)
-            if not (0 <= col + j < size):
+        cur_idx = idx + [i]
+        if len(cur_idx) < DIM:
+            res.extend(get_adjacent(input, *args, **{'idx': cur_idx}))
+        else:
+            if all((el == 0 for el in cur_idx)):
+                # only want adjacent elements, not itself
                 continue
 
-            for k in range(-1, 2):
-                if not (0 <= dep + k < size):
-                    continue
-
-                for l in range(-1, 2):
-                    if not (0 <= four + l < size):
-                        continue
-
-                    if i == j == k == l == 0:
-                        # only want adjacent elements, not itself
-                        continue
-
-                    res.append(input[row+i][col+j][dep+k][four+l])
+            res.append(reduce(lambda x, y: x[args[y] + cur_idx[y]], range(DIM), input))
+            pass
+            #res.append(input[row+i][col+j][dep+k][four+l])
     return res
 
 for cycle in range(6):
     print(f'\nCycle {cycle+1}')
     size += 2
-    enlarge_grid = [[[[False for i in range(size)] for i in range(size)] for i in range(size)] for i in range(size)]
-    new_grid = [[[[False for i in range(size)] for i in range(size)] for i in range(size)] for i in range(size)]
+    enlarge_grid = create_nth_dimension_array(size, DIM)
+    new_grid = copy.deepcopy(enlarge_grid)
     for i in range(1, size-1):
         for j in range(1, size-1):
             for k in range(1, size-1):
@@ -101,8 +105,7 @@ for cycle in range(6):
 
 
 #print_grid(grid)
-import itertools
 
-
-print(sum(list(itertools.chain.from_iterable(itertools.chain.from_iterable(itertools.chain.from_iterable(grid))))))
+# Reduce unflattens the list
+print(sum(reduce(lambda x, y: itertools.chain.from_iterable(x), range(DIM - 1), grid)))
 

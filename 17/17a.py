@@ -7,7 +7,7 @@ from operator import mul
 import os
 import re
 from time import time
-from typing import Dict, List, Set, Tuple, Union
+from typing import Any, Dict, List, Set, Tuple, Union
 
 from humanize import intcomma
 import copy
@@ -24,6 +24,7 @@ if __name__ == '__main__':
 
 INPUT_FILE='17-input.txt'
 #INPUT_FILE='17a-example.txt'
+DIM = 3
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 size = len(input)
@@ -97,5 +98,5 @@ for cycle in range(6):
 
 #print_grid(new_grid)
 
-print(sum(list(itertools.chain.from_iterable(itertools.chain.from_iterable(grid)))))
+print(sum(reduce(lambda x, y: itertools.chain.from_iterable(x), range(2), grid)))
 
