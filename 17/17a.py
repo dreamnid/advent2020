@@ -99,4 +99,3 @@ for cycle in range(6):
 #print_grid(new_grid)
 
 print(sum(reduce(lambda x, y: itertools.chain.from_iterable(x), range(2), grid)))
-

@@ -108,4 +108,3 @@ for cycle in range(6):
 
 # Reduce unflattens the list
 print(sum(reduce(lambda x, y: itertools.chain.from_iterable(x), range(DIM - 1), grid)))
-
