@@ -73,8 +73,6 @@ def get_adjacent(input, *args, **kwargs) -> List[Any]:
                 continue
 
             res.append(reduce(lambda x, y: x[args[y] + cur_idx[y]], range(DIM), input))
-            pass
-            #res.append(input[row+i][col+j][dep+k][four+l])
     return res
 
 for cycle in range(6):
