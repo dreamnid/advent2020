@@ -22,7 +22,15 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='20-input.txt'
-#INPUT_FILE='20a-example.txt'
+INPUT_FILE='20a-example.txt'
+
+def rotate_cw(matrix: List[str]):
+    """
+    Rotates matrix clockwise
+
+    Credit: https://stackoverflow.com/questions/8421337/rotating-a-two-dimensional-array-in-python
+    """
+    return [''.join(row) for row in zip(*matrix[::-1])]
 
 tiles = dict()
 tile_edges = defaultdict(list)
@@ -80,6 +88,17 @@ for tile_edge, cur_tiles in tile_edges.items():
         # left (first col)
         elif (pos == (0, 0) and incr == (1, 0)) or (pos == (tile_size-1, 0) and incr == (-1, 0)):
             tile_neigh[tile_id][3] = cur_tiles[idx-1][0]
+
+
+# Idea of how to make the image from the tiles: Build out each row of tiles
+#
+# For the first tile in the row:
+#     For the first row, use the top left corner tile
+#     Else, rotate the tile until it aligns with the tile above it
+#   In either case, append the rows of each tile to the temp image buf
+# For the remaining tiles in the row
+#     # Compare current tile to the tile to the left. Rotate title as needed to align. Append its strings to the end of each row in the a temp image buf
+# When there is no tile to the right, we're at the end of the row. Append rows of the temp image buf to the main image array
 
 res = [tile_id for tile_id, edges in tile_neigh.items() if len(edges) == 2]
 print('Product of corner tiles: ', reduce(mul, res))
