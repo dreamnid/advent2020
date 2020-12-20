@@ -60,28 +60,26 @@ for tile in get_file_contents(INPUT_FILE):
 
 tile_neigh = defaultdict(dict)
 
-for tile_edge, tiles in tile_edges.items():
-    if len(tiles) == 1:
+for tile_edge, cur_tiles in tile_edges.items():
+    if len(cur_tiles) == 1:
         continue
 
-    for idx, tile in enumerate(tiles):
+    for idx, tile in enumerate(cur_tiles):
         tile_id = tile[0]
         pos = tile[1]
         incr = tile[2]
         # top (first row)
         if (pos == (0, 0) and incr == (0, 1)) or (pos == (0, tile_size-1) and incr == (0, -1)):
-            tile_neigh[tile_id][0] = tiles[idx-1][0]
+            tile_neigh[tile_id][0] = cur_tiles[idx-1][0]
         # right (last col)
         elif (pos == (0, tile_size-1) and incr == (1, 0)) or (pos == (tile_size-1, tile_size-1) and incr == (-1, 0)):
-            tile_neigh[tile_id][1] = tiles[idx-1][0]
+            tile_neigh[tile_id][1] = cur_tiles[idx-1][0]
         # bottom (last row)
         elif (pos == (tile_size-1, 0) and incr == (0, 1)) or (pos == (tile_size-1, tile_size-1) and incr == (0, -1)):
-            tile_neigh[tile_id][2] = tiles[idx-1][0]
+            tile_neigh[tile_id][2] = cur_tiles[idx-1][0]
         # left (first col)
         elif (pos == (0, 0) and incr == (1, 0)) or (pos == (tile_size-1, 0) and incr == (-1, 0)):
-            tile_neigh[tile_id][3] = tiles[idx-1][0]
+            tile_neigh[tile_id][3] = cur_tiles[idx-1][0]
 
 res = [tile_id for tile_id, edges in tile_neigh.items() if len(edges) == 2]
 print('Product of corner tiles: ', reduce(mul, res))
-
-
