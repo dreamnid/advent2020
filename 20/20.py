@@ -113,19 +113,8 @@ print('Product of corner tiles: ', reduce(mul, res))
 #pprint.pprint(tiles)
 pprint.pprint(tile_neigh)
 
-image = []
 # Find top-left tile. This will the tile that has a bottom[2], and right neighbor [1]
 #pprint.pprint(top_left)
-
-tmp_img_buf = [''] * tile_size
-cur_tile_id = 1951
-#num_rotations = 1
-#need_to_match = ''.join(row[-1] for row in tiles[cur_tile_id])
-#need_to_match = ''.join(row[0] for row in tiles[cur_tile_id])
-need_to_match = tiles[cur_tile_id][tile_size-1]
-#need_to_match = tiles[cur_tile_id][0]
-tile_pos = [[]]
-tiles_used = set()
 
 def matcher(tile, match):
 
@@ -164,6 +153,24 @@ def matcher(tile, match):
 
     return None
 
+strip_borders = True
+if strip_borders:
+    start_idx = 1
+    end_idx = tile_size-1
+else:
+    start_idx = 0
+    end_idx = tile_size
+
+image = []
+tmp_img_buf = [''] * tile_size
+cur_tile_id = 1951
+# num_rotations = 1
+# need_to_match = ''.join(row[-1] for row in tiles[cur_tile_id])
+# need_to_match = ''.join(row[0] for row in tiles[cur_tile_id])
+need_to_match = tiles[cur_tile_id][tile_size - 1]
+# need_to_match = tiles[cur_tile_id][0]
+tile_pos = [[]]
+tiles_used = set()
 pprint.pprint(tiles[cur_tile_id])
 while True:
     #cur_tile = reduce(lambda x, y: rotate_cw(x), range(num_rotations), tiles[cur_tile_id])
@@ -175,7 +182,6 @@ while True:
     num_rotations = answer[0]
 
     pprint.pprint(answer)
-
 
     if tmp_img_buf[0] == '':
         if image:
@@ -193,18 +199,30 @@ while True:
     pprint.pprint(cur_tile)
     print('num rot', num_rotations)
 
-    tmp_img_buf = [row + cur_tile[idx] for idx, row in enumerate(tmp_img_buf)]
+    tmp_img_buf = [row + cur_tile[idx][start_idx:end_idx] for idx, row in enumerate(tmp_img_buf)]
     tile_pos[-1].append(cur_tile_id)
     tiles_used.add(cur_tile_id)
 
     if answer[2]:
         right_idx = 2 if num_rotations == 0 else num_rotations - 1
+        if num_rotations == 0:
+            right_idx = 3
+        elif num_rotations == 1:
+            right_idx = 0
+        elif num_rotations == 2:
+            right_idx = 1
+        elif num_rotations == 3:
+            right_idx = 2
     else:
-        right_idx = 1 if num_rotations == 0 else num_rotations - 1
-    # 0 rotations = idx = 1
-    # 1 rotation = idx = 0
-    # 2 rotations = idx = -1 or 3
-    # 3 rotations = idx = -2 or 2
+        if num_rotations == 0:
+            right_idx = 1
+        elif num_rotations == 1:
+            right_idx = 0
+        elif num_rotations == 2:
+            right_idx = 3
+        elif num_rotations == 3:
+            right_idx = 2
+        #right_idx = 1 if num_rotations == 0 else num_rotations - 1
     print('right idx', right_idx)
     if right_idx in tile_neigh[cur_tile_id]:
         cur_tile_id = tile_neigh[cur_tile_id][right_idx]
@@ -212,7 +230,7 @@ while True:
         need_to_match = ''.join([row[tile_size-1] for row in cur_tile])
         pass
     else:
-        image.extend(tmp_img_buf)
+        image.extend(tmp_img_buf[start_idx:end_idx])
         pprint.pprint(image)
         pprint.pprint(tile_pos)
 
