@@ -26,6 +26,7 @@ INPUT_FILE='21-input.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 
+start_a = time()
 contains_regex = re.compile(r'\(contains (([\w]+(, )?)+)\)')
 guesser = defaultdict(lambda: defaultdict(int))
 counter_allergens = defaultdict(int)
@@ -55,20 +56,35 @@ pprint.pprint(counter_ingredients)
 pprint.pprint(guesser)
 
 safe_ingredients = []
+poss_allergens = defaultdict(set)
 for ingredient, cur_allergens in guesser.items():
     #pprint.pprint(cur_allergens.values())
     #pprint.pprint([val == 1 for val in cur_allergens.values()])
     #pprint.pprint([count < counter_allergens[cur_allergen] for cur_allergen, count in cur_allergens.items()])
     if all([count < counter_allergens[cur_allergen] for cur_allergen, count in cur_allergens.items()]):
         safe_ingredients.append(ingredient)
+    for cur_allergen, count in cur_allergens.items():
+        if count >= counter_allergens[cur_allergen]:
+            poss_allergens[cur_allergen].add(ingredient)
 
 #print(len(safe_ingredients), safe_ingredients)
+total_times_safe_appears = reduce(lambda x, y: x + counter_ingredients[y], safe_ingredients, 0)
+start_b = time()
+print(total_times_safe_appears)
+print('time a:', start_b - start_a)
+print()
 
-total = 0
-for ingredient in safe_ingredients:
-    total += counter_ingredients[ingredient]
+allergy_map = {}
+while len(allergy_map) < len(counter_allergens):
+    for ingredient, poss in poss_allergens.items():
+        if ingredient in allergy_map:
+            continue
+        tmp_poss = poss - set(allergy_map.values())
+        if len(tmp_poss) == 1:
+            allergy_map[ingredient] = tmp_poss.pop()
 
-print(total)
+print('Allergy mapping')
+pprint.pprint(allergy_map)
 
-
-
+print('Part (b) Answer:', ','.join([x[1] for x in sorted(allergy_map.items(), key=lambda x: x[0])]))
+print('time b:', time() - start_b)
