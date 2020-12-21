@@ -1,6 +1,10 @@
 # Day 20
 Note that you have to set the top left corner manually at the moment
 
+seamonster.txt contents were copied from the site
+Because get_file_input() strips out spaces which ruins the image mask, I decided to convert seamonster.txt
+to seamonster_form.txt as a file of 0 and 1s. This was generated via: `sed -e 's/ /0/g' -e 's/#/1/g' seamonster.txt > seamonster_form.txt`
+
 ## Performance
 ```bash
 (advent2020) ➜  20 git:(master) ✗ time python3 20.py         
