@@ -197,15 +197,15 @@ while True:
 
     if tmp_img_buf[0] == '':
         if image:
-            # This is the first entry
+            # This is the first tile in the row, but not the top-left corner
 
-            # Need to rotate three more time since match was on the left side and need to make it on top to align with row above
+            # Need to rotate 1 time since match was on the left side and need to make it on top to align with row above
             for i in range(1):
                 cur_tile = rotate_cw(cur_tile)
-            num_rotations += 5
+            num_rotations += 1
             num_rotations %= 4
 
-        # save the bottom
+        # save the bottom so we can use it to align the tile below for the start of the next row
         row_bottom = cur_tile[tile_size-1]
 
     #pprint.pprint(cur_tile)
@@ -218,6 +218,7 @@ while True:
     if answer[1] and answer[2]:
         assert False, 'ahhh'
 
+    # was flipped around the x-axis
     elif answer[1]:
         if num_rotations == 0:
             right_idx = 1
@@ -227,6 +228,7 @@ while True:
             right_idx = 3
         elif num_rotations == 3:
             right_idx = 0
+    # was flipped around the y-axis
     elif answer[2]:
         if num_rotations == 0:
             right_idx = 3
