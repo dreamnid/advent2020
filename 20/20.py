@@ -23,7 +23,7 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='20-input.txt'
-INPUT_FILE='20a-example.txt'
+#INPUT_FILE='20a-example.txt'
 
 def rotate_cw(matrix: List[str]):
     """
@@ -33,10 +33,10 @@ def rotate_cw(matrix: List[str]):
     """
     return [''.join(row) for row in zip(*matrix[::-1])]
 
-def flip_y(matrix: List[str]):
+def flip_x(matrix: List[str]):
     return matrix[::-1]
 
-def flip_x(matrix: List[str]):
+def flip_y(matrix: List[str]):
     return [row[::-1] for row in matrix]
 
 tiles = dict()
@@ -113,10 +113,12 @@ print('Product of corner tiles: ', reduce(mul, res))
 #pprint.pprint(tiles)
 pprint.pprint(tile_neigh)
 
-# Find top-left tile. This will the tile that has a bottom[2], and right neighbor [1]
 #pprint.pprint(top_left)
 
-def matcher(tile, match):
+def matcher(tile: List[str], match: str) -> Tuple[int, bool, bool, List[str]]:
+    """
+    Find a combination that will have the tile first column equal to the provided match string
+    """
 
     def a(flip_x_wanted, flip_y_wanted):
         tmp_tile = deepcopy(tile)
@@ -153,6 +155,24 @@ def matcher(tile, match):
 
     return None
 
+
+# Find top-left tile. This will the tile that has a bottom[2], and right neighbor [1]
+
+# This is hard-coded for now
+
+# For example input
+#cur_tile_id = 1951
+# Choose 1951 to follow example. Since 1951 has neighbors at top and right, we need to rotate once
+# to make it orient right and down (to make it a top left corner piece).
+# So we'll choose need_to_match to be the last row since it will rotate once in teh loop
+#need_to_match = tiles[cur_tile_id][tile_size - 1]
+
+# For puzzle input
+# Look for a tile that has neighbor at top (0) and right (1)
+# Otherwise need_to_match needs to be changed
+cur_tile_id = 1321
+need_to_match = tiles[cur_tile_id][tile_size - 1]
+
 strip_borders = True
 if strip_borders:
     start_idx = 1
@@ -163,14 +183,8 @@ else:
 
 image = []
 tmp_img_buf = [''] * tile_size
-cur_tile_id = 1951
-# need_to_match = ''.join(row[-1] for row in tiles[cur_tile_id])
-# need_to_match = ''.join(row[0] for row in tiles[cur_tile_id])
-need_to_match = tiles[cur_tile_id][tile_size - 1]
-# need_to_match = tiles[cur_tile_id][0]
 tile_pos = [[]]
 tiles_used = set()
-#pprint.pprint(tiles[cur_tile_id])
 while True:
     answer = matcher(tiles[cur_tile_id], need_to_match)
     if not answer:
@@ -201,8 +215,19 @@ while True:
     tile_pos[-1].append(cur_tile_id)
     tiles_used.add(cur_tile_id)
 
-    if answer[2]:
-        right_idx = 2 if num_rotations == 0 else num_rotations - 1
+    if answer[1] and answer[2]:
+        assert False, 'ahhh'
+
+    elif answer[1]:
+        if num_rotations == 0:
+            right_idx = 1
+        elif num_rotations == 1:
+            right_idx = 2
+        elif num_rotations == 2:
+            right_idx = 3
+        elif num_rotations == 3:
+            right_idx = 0
+    elif answer[2]:
         if num_rotations == 0:
             right_idx = 3
         elif num_rotations == 1:
@@ -220,7 +245,6 @@ while True:
             right_idx = 3
         elif num_rotations == 3:
             right_idx = 2
-        #right_idx = 1 if num_rotations == 0 else num_rotations - 1
     #print('right idx', right_idx)
     if right_idx in tile_neigh[cur_tile_id]:
         cur_tile_id = tile_neigh[cur_tile_id][right_idx]
@@ -243,7 +267,7 @@ while True:
         else:
             break
 print('------')
-pprint.pprint(image)
+#pprint.pprint(image)
 
 monster_input = [[True if char == '1' else False for char in line] for line in get_file_contents('seamonster_form.txt')[0]]
 monster_input_width = len(monster_input[0])
@@ -252,7 +276,7 @@ monster_input_height = len(monster_input)
 row = 0
 col = 0
 
-def has_dragon(image, row_idx, col_idx):
+def has_dragon(image: List[List[str]], row_idx: int, col_idx: int) -> bool:
     sub_image = [[col for col in row[col_idx:col_idx+monster_input_width]] for row in image[row_idx:row_idx+monster_input_height]]
 
     found = True
@@ -263,9 +287,14 @@ def has_dragon(image, row_idx, col_idx):
 
         if not found:
             break
+    if found:
+        for i, row in enumerate(monster_input):
+            for j, col in enumerate(row):
+                if col:
+                    image[row_idx+i][col_idx+j] = 'O'
     return found
 
-def image_manipulator(image):
+def image_manipulator(image: List[List[str]]) -> List[List[str]]:
 
     def a(flip_x_wanted, flip_y_wanted):
         tmp_tile = deepcopy(image)
@@ -298,9 +327,14 @@ def image_manipulator(image):
     if res:
         yield res
 
-
+#Convert to list of list of chars since easier to manipulate
+image = [list(row) for row in image]
 for cur_image in image_manipulator(image):
     matches = [has_dragon(cur_image, row, col) for row in range(len(image)-monster_input_height+1) for col in range(len(image)-monster_input_width+1)]
     if sum(matches):
+        # Sea monsters only appear in one orientation so don't have to check other variations
         break
+
+pprint.pprint([''.join(row) for row in cur_image])
 print('number of dragons', sum(matches))
+print('answer: ', [x for row in cur_image for x in row].count('#'))
