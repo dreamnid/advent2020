@@ -276,7 +276,7 @@ monster_input_height = len(monster_input)
 row = 0
 col = 0
 
-def has_dragon(image: List[List[str]], row_idx: int, col_idx: int) -> bool:
+def find_and_mark_monster(image: List[List[str]], row_idx: int, col_idx: int) -> bool:
     sub_image = [[col for col in row[col_idx:col_idx+monster_input_width]] for row in image[row_idx:row_idx+monster_input_height]]
 
     found = True
@@ -288,6 +288,7 @@ def has_dragon(image: List[List[str]], row_idx: int, col_idx: int) -> bool:
         if not found:
             break
     if found:
+        # Mark the elements of the monster as 'O' in the image
         for i, row in enumerate(monster_input):
             for j, col in enumerate(row):
                 if col:
@@ -330,7 +331,7 @@ def image_manipulator(image: List[List[str]]) -> List[List[str]]:
 #Convert to list of list of chars since easier to manipulate
 image = [list(row) for row in image]
 for cur_image in image_manipulator(image):
-    matches = [has_dragon(cur_image, row, col) for row in range(len(image)-monster_input_height+1) for col in range(len(image)-monster_input_width+1)]
+    matches = [find_and_mark_monster(cur_image, row, col) for row in range(len(image) - monster_input_height + 1) for col in range(len(image) - monster_input_width + 1)]
     if sum(matches):
         # Sea monsters only appear in one orientation so don't have to check other variations
         break
