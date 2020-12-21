@@ -5,7 +5,7 @@ INPUT_FILE = '3-input.txt'
 #INPUT_FILE = 'example-input.txt'
 
 with open(INPUT_FILE) as fh:
-    rows = [line.strip() for line in fh
+    rows = [line.strip() for line in fh]
 
 col_idx = 0
 trees = 0
