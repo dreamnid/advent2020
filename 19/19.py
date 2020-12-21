@@ -41,19 +41,18 @@ for line in get_file_contents(INPUT_FILE)[0]:
     rules[rule_num] = rule
 
 
-def matcher(rule_id: int, match: str, rules: Dict[int, List[List[Union[str, int]]]]) -> str:
+def matcher(rule_id: int, match: str, rules: Dict[int, List[List[Union[str, int]]]]) -> Union[List[str], None]:
     res = []
     for rule in rules[rule_id]:
         #print('Rule', rule_id, rule)
+        # Need to initialize buffer with empty string so it will run through the `for cur_buf in buffer` loop at least once
         buffer = ['']
         for el in rule:
-            found = False
             new_buf = []
             for cur_buf in buffer:
                 #print('--')
                 #print('top of cur_buf', cur_buf, buffer)
 
-                found = False
                 if len(cur_buf) >= len(match):
                     # Rule has more chars required than what we have
                     reason = 'too long'
@@ -64,14 +63,12 @@ def matcher(rule_id: int, match: str, rules: Dict[int, List[List[Union[str, int]
                     if cur_poss:
                         for poss in cur_poss:
                             new_buf.append(cur_buf + poss)
-                        found |= True
                     else:
                         reason = 'matcher returned None'
                         #print(reason, el, f'[{match[len(cur_buf):]}]')
                 else:
                     if el == match[len(cur_buf)]:
                         new_buf.append(cur_buf + el)
-                        found |= True
                         reason = f'char match: {el} == {match[len(cur_buf)]}, {match[:len(cur_buf)] + "[" + match[len(cur_buf)] + "]" + match[len(cur_buf)+1:]}'
                         #print(reason)
                     else:
@@ -87,8 +84,7 @@ def matcher(rule_id: int, match: str, rules: Dict[int, List[List[Union[str, int]
     return res if res else None
 
 
-
-def find_matches(messages, rules):
+def find_matches(messages: List[str], rules: Dict[int, List[List[Union[int, str]]]]) -> Tuple[List[str], List[str]]:
     valid_messages = []
     too_long = []
 
