@@ -164,16 +164,14 @@ else:
 image = []
 tmp_img_buf = [''] * tile_size
 cur_tile_id = 1951
-# num_rotations = 1
 # need_to_match = ''.join(row[-1] for row in tiles[cur_tile_id])
 # need_to_match = ''.join(row[0] for row in tiles[cur_tile_id])
 need_to_match = tiles[cur_tile_id][tile_size - 1]
 # need_to_match = tiles[cur_tile_id][0]
 tile_pos = [[]]
 tiles_used = set()
-pprint.pprint(tiles[cur_tile_id])
+#pprint.pprint(tiles[cur_tile_id])
 while True:
-    #cur_tile = reduce(lambda x, y: rotate_cw(x), range(num_rotations), tiles[cur_tile_id])
     answer = matcher(tiles[cur_tile_id], need_to_match)
     if not answer:
         assert False, 'Bad answer'
@@ -181,7 +179,7 @@ while True:
     cur_tile = answer[-1]
     num_rotations = answer[0]
 
-    pprint.pprint(answer)
+    #pprint.pprint(answer)
 
     if tmp_img_buf[0] == '':
         if image:
@@ -196,8 +194,8 @@ while True:
         # save the bottom
         row_bottom = cur_tile[tile_size-1]
 
-    pprint.pprint(cur_tile)
-    print('num rot', num_rotations)
+    #pprint.pprint(cur_tile)
+    #print('num rot', num_rotations)
 
     tmp_img_buf = [row + cur_tile[idx][start_idx:end_idx] for idx, row in enumerate(tmp_img_buf)]
     tile_pos[-1].append(cur_tile_id)
@@ -223,16 +221,16 @@ while True:
         elif num_rotations == 3:
             right_idx = 2
         #right_idx = 1 if num_rotations == 0 else num_rotations - 1
-    print('right idx', right_idx)
+    #print('right idx', right_idx)
     if right_idx in tile_neigh[cur_tile_id]:
         cur_tile_id = tile_neigh[cur_tile_id][right_idx]
-        print(cur_tile_id)
+        #print(cur_tile_id)
         need_to_match = ''.join([row[tile_size-1] for row in cur_tile])
         pass
     else:
         image.extend(tmp_img_buf[start_idx:end_idx])
-        pprint.pprint(image)
-        pprint.pprint(tile_pos)
+        #pprint.pprint(image)
+        #pprint.pprint(tile_pos)
 
         # Are we in the last row?
         if len(tile_pos) != len(tile_pos[0]):
@@ -240,10 +238,69 @@ while True:
 
             cur_tile_id = (set(tile_neigh[tile_pos[-1][0]].values()) - tiles_used).pop()
             need_to_match = row_bottom[::-1]
-            print('next row', 'cur_tile_id', cur_tile_id, 'need_to_match', need_to_match)
+            #print('next row', 'cur_tile_id', cur_tile_id, 'need_to_match', need_to_match)
             tile_pos.append([])
         else:
             break
 print('------')
-pprint.pprint(tile_pos)
 pprint.pprint(image)
+
+monster_input = [[True if char == '1' else False for char in line] for line in get_file_contents('seamonster_form.txt')[0]]
+monster_input_width = len(monster_input[0])
+monster_input_height = len(monster_input)
+
+row = 0
+col = 0
+
+def has_dragon(image, row_idx, col_idx):
+    sub_image = [[col for col in row[col_idx:col_idx+monster_input_width]] for row in image[row_idx:row_idx+monster_input_height]]
+
+    found = True
+    for i, row in enumerate(monster_input):
+        for j, col in enumerate(row):
+            if col:
+                found &= sub_image[i][j] in ['#', 'O']
+
+        if not found:
+            break
+    return found
+
+def image_manipulator(image):
+
+    def a(flip_x_wanted, flip_y_wanted):
+        tmp_tile = deepcopy(image)
+
+        if flip_x_wanted:
+            tmp_tile = flip_x(tmp_tile)
+
+        if flip_y_wanted:
+            tmp_tile = flip_y(tmp_tile)
+
+        for num_rotations in range(4):
+            if num_rotations > 0:
+                tmp_tile = rotate_cw(tmp_tile)
+
+            return tmp_tile
+
+    res = a(False, False)
+    if res:
+        yield res
+
+    res = a(True, False)
+    if res:
+        yield res
+
+    res = a(False, True)
+    if res:
+        yield res
+
+    res = a(True, True)
+    if res:
+        yield res
+
+
+for cur_image in image_manipulator(image):
+    matches = [has_dragon(cur_image, row, col) for row in range(len(image)-monster_input_height+1) for col in range(len(image)-monster_input_width+1)]
+    if sum(matches):
+        break
+print('number of dragons', sum(matches))
