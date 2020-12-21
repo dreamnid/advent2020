@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from collections import defaultdict
+from copy import deepcopy
 from functools import partial, reduce
 import math
 from operator import mul
@@ -22,8 +23,9 @@ if __name__ == '__main__':
 
 INPUT_FILE='19-input.txt'
 #INPUT_FILE='19a-example.txt'
+#INPUT_FILE='19b-example.txt'
 
-rules = [None] * len(get_file_contents(INPUT_FILE)[0])
+rules = dict()
 for line in get_file_contents(INPUT_FILE)[0]:
     line_split = line.split(':')
     rule_num = int(line_split[0])
@@ -39,61 +41,85 @@ for line in get_file_contents(INPUT_FILE)[0]:
     rules[rule_num] = rule
 
 
-def matcher(rule: int, match: str) -> str:
-    num_found = 0
+def matcher(rule_id: int, match: str, rules: Dict[int, List[List[Union[str, int]]]]) -> str:
     res = []
-    for rule in rules[rule]:
-        matched = ''
-        found = False
-        idx = 0
+    for rule in rules[rule_id]:
+        #print('Rule', rule_id, rule)
+        buffer = ['']
         for el in rule:
             found = False
-            if idx >= len(match):
-                # Rule has more chars required than what we have
-                reason = 'too long'
-                break
+            new_buf = []
+            for cur_buf in buffer:
+                #print('--')
+                #print('top of cur_buf', cur_buf, buffer)
 
-            if isinstance(el, int):
-                cur_poss = matcher(el, match[idx:])
-                if cur_poss:
-                    matched += cur_poss
-                    found |= True
-                    idx += len(cur_poss)
+                found = False
+                if len(cur_buf) >= len(match):
+                    # Rule has more chars required than what we have
+                    reason = 'too long'
+                    break
+
+                if isinstance(el, int):
+                    cur_poss = matcher(el, match[len(cur_buf):], rules)
+                    if cur_poss:
+                        for poss in cur_poss:
+                            new_buf.append(cur_buf + poss)
+                        found |= True
+                    else:
+                        reason = 'matcher returned None'
+                        #print(reason, el, f'[{match[len(cur_buf):]}]')
                 else:
-                    reason = 'matcher returned None'
-                    pass
-            else:
-                if el == match[idx]:
-                    matched += el
-                    found |= True
-                    idx += 1
-                else:
-                    reason = f'char does not match: {el} != {match[idx]}, {match[:idx] + "[" + match[idx] + "]" + match[idx+1:]}'
-                    pass
+                    if el == match[len(cur_buf)]:
+                        new_buf.append(cur_buf + el)
+                        found |= True
+                        reason = f'char match: {el} == {match[len(cur_buf)]}, {match[:len(cur_buf)] + "[" + match[len(cur_buf)] + "]" + match[len(cur_buf)+1:]}'
+                        #print(reason)
+                    else:
+                        reason = f'char does not match: {el} != {match[len(cur_buf)]}, {match[:len(cur_buf)] + "[" + match[len(cur_buf)] + "]" + match[len(cur_buf)+1:]}'
+                        #print(reason)
+                        pass
+            #print('new_buf', new_buf)
+            buffer = new_buf
 
-            if not found:
-                break
-        if found:
-            res.append(matched)
-            num_found += 1
-            #break
+        if buffer:
+            res += buffer
+        #print('buffer', buffer)
+    return res if res else None
 
-    return res[0] if num_found else None
+
+
+def find_matches(messages, rules):
+    valid_messages = []
+    too_long = []
+
+    for message in messages:
+    #    print('Matching ', message)
+        res = matcher(0, message, rules)
+        if res and res[0] == message:
+            valid_messages.append(message)
+        elif res:
+            too_long.append(message)
+    #    print()
+    #    print(valid_messages, too_long)
+
+    #    print('----------------')
+    return valid_messages, too_long
 
 
 messages = [line for line in get_file_contents(INPUT_FILE)[1]]
-valid_messages = []
-too_long = []
+start_a = time()
+valid_messages, _ = find_matches(messages, rules)
+print('Part a - Total valid messages:', len(valid_messages), '/', len(messages))
+start_b = time()
+print('Part a timing:', start_b - start_a)
+print()
 
-for message in messages:
-    tmp = message
-    res = matcher(0, message)
-    if res and res == message:
-        valid_messages.append(message)
-    elif res:
-        too_long.append(message)
+# For part b - introducing loops
+# Have to use deepcopy since deep_copy_json uses json to clone and json doesn't support int strings
+new_rules = deepcopy(rules)
+new_rules[8] = [[42], [42, 8]]
+new_rules[11] = [[42, 31], [42, 11, 31]]
 
-print('Total too long', len(too_long))
-print('Total valid messages', len(valid_messages), '/', len(messages))
-
-
+valid_messages, _ = find_matches(messages, new_rules)
+print('Part b - Total valid messages:', len(valid_messages), '/', len(messages))
+print('Part b timing:', time() - start_b)
