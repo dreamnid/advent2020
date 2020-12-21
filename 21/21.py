@@ -50,10 +50,10 @@ for line in input:
         else:
             break
 
-pprint.pprint(counter_allergens)
-pprint.pprint(counter_ingredients)
+#pprint.pprint(counter_allergens)
+#pprint.pprint(counter_ingredients)
 
-pprint.pprint(guesser)
+#pprint.pprint(guesser)
 
 safe_ingredients = []
 poss_allergens = defaultdict(set)
@@ -70,7 +70,7 @@ for ingredient, cur_allergens in guesser.items():
 #print(len(safe_ingredients), safe_ingredients)
 total_times_safe_appears = reduce(lambda x, y: x + counter_ingredients[y], safe_ingredients, 0)
 start_b = time()
-print(total_times_safe_appears)
+print('part (a) - times safe ingredient appears:', total_times_safe_appears)
 print('time a:', start_b - start_a)
 print()
 
