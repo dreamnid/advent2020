@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from collections import defaultdict
 from functools import partial, reduce
+from itertools import islice
 import math
 from operator import mul
 import os
@@ -24,45 +25,110 @@ if __name__ == '__main__':
 INPUT_FILE='23-input.txt'
 #INPUT_FILE='23a-example.txt'
 
+class Node(object):
+    def __init__(self, val: int):
+        self.val = val
+        self.next = None
+
+    def getVal(self):
+        return self.val
+
+    def setNext(self, next_node):
+        self.next = next_node
+
+    def __iter__(self):
+        node = self
+        while node is not None:
+            yield node
+            node = node.next
+
+    def __next__(self):
+        if self.next is None:
+            raise StopIteration
+        return self.next
+
+    def __repr__(self):
+        return str(self.val)
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return self.getVal() == other
+        else:
+            return self.getVal() == other.getVal()
+
 input = [int(char) for line in get_file_contents(INPUT_FILE)[0] for char in line]
-#print(input)
-from itertools import cycle, islice
-cur_cup_idx = 0
-new_list = input.copy()
-for turn in range(100):
-    current_cup = new_list[cur_cup_idx]
-    print(turn+1, '{}[{}]{}'.format(''.join([str(i) for i in new_list[:cur_cup_idx]]), current_cup, ''.join([str(i) for i in new_list[cur_cup_idx+1:]])))
-    cycle_list = cycle(new_list)
-    pick_up = list(islice(cycle(new_list), cur_cup_idx+1, cur_cup_idx+4))
-    for i in pick_up:
-        new_list.pop(new_list.index(i))
-    print(turn+1, pick_up, '{}[{}]{}'.format(''.join([str(i) for i in new_list[:cur_cup_idx]]), current_cup, ''.join([str(i) for i in new_list[cur_cup_idx+1:]])))
-    #print(turn + 1, current_cup, pick_up, new_list)
 
+def play_cups(input: List[int], num_moves: int) -> Node:
+    #input_size = b_size
 
-    target = current_cup
-    while True:
-        target -= 1
-        if min(new_list) > target:
-            target = max(new_list)
+    max_val = input[0]
+    min_val = input[0]
+    lookup = dict()
+    first_node: Node = None
+    last_node: Node = None
+    for el in input:
+        if el > max_val:
+            max_val = el
+        if el < min_val:
+            min_val = el
 
-        if target in new_list:
-            idx = new_list.index(target)
-            print('target', target, 'idx', idx)
-            # if idx == len(new_list) - 3:
-            #     new_list.append(pick_up[0])
-            #     new_list += pick_up[1:]
-            # elif idx == len(new_list) - 2:
-            #     new_list += pick_up[:2]
-            #     new_list += pick_up[2:]
-            # elif idx == len(new_list) - 1:
-            #     new_list += pick_up
-            # else:
-            new_list = new_list[:idx+1] + pick_up + new_list[idx+1:]
-            cur_cup_idx = new_list.index(current_cup) + 1
-            cur_cup_idx %= len(input)
-            break
-#print('new_list', new_list)
-idx = new_list.index(1)
-print(''.join([str(i) for i in new_list[idx+1:]] + [str(i) for i in new_list[:idx]]))
+        node = Node(el)
+        lookup[el] = node
 
+        if not first_node:
+            first_node = node
+        if last_node:
+            last_node.setNext(node)
+        last_node = node
+
+    last_node.setNext(first_node)
+
+    cur_node: Node = first_node
+    for turn in range(num_moves):
+        pick_up = list(islice(next(cur_node), 3))
+        cur_node.setNext(next(pick_up[-1]))
+        #print(pick_up, list(islice(cur_node, 9)))
+
+        target = cur_node.getVal()
+        while True:
+            target -= 1
+            if (target == min_val and min_val in pick_up) or (target not in lookup):
+                target = max_val
+
+            if target not in pick_up:
+                target_node = lookup[target]
+                #print('target', target, target_node)
+                tmp_next_node = next(target_node)
+
+                target_node.setNext(pick_up[0])
+                pick_up[-1].setNext(tmp_next_node)
+
+                cur_node = next(cur_node)
+                break
+
+    return lookup[1]
+
+start_a = time()
+node_1 = play_cups(input, 100)
+print('part a: ', end='')
+cur_node = next(node_1)
+next_node = next(cur_node)
+for i in range(8):
+    print(cur_node, end='')
+    cur_node = next(cur_node)
+print()
+print('part a timing:', time() - start_a)
+
+print()
+
+start_b = time()
+
+# Fill the rest of the input starting from the last number used + 1 to 1,000,000
+b_size = pow(10, 6)
+new_list = input + [i for i in range(len(input) + 1, b_size+1)]
+# Play 10,000,000 moves
+node_1 = play_cups(new_list, pow(10, 7))
+cur_node = next(node_1)
+next_node = next(cur_node)
+print('Part b:', cur_node, next_node, cur_node.getVal() * next_node.getVal())
+print('Part b timing:', time() - start_b)
