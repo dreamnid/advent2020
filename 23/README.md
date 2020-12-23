@@ -1,7 +1,6 @@
 # Day 23
-Part A - Spent too long trying to trace where I'm going wrong. Fealized I didn't
-need to format the list as shown as the example so don't need to worry
-about moving things off the end of list to the beginning
+Part A - Spent too long trying to trace where I was going wrong. 
+Realized I didn't need to format the list as shown as the example so didn't need to worry about moving things off the end of list to the beginning
 
 ## Performance
 Part a
