@@ -110,9 +110,11 @@ def play_cups(input: List[int], num_moves: int) -> Node:
 
 start_a = time()
 node_1 = play_cups(input, 100)
+
 print('part a: ', end='')
 cur_node = next(node_1)
 next_node = next(cur_node)
+# Need to be careful as this is a circular list so will never terminate if we iterate on the linked-list
 for i in range(8):
     print(cur_node, end='')
     cur_node = next(cur_node)
@@ -130,5 +132,5 @@ new_list = input + [i for i in range(len(input) + 1, b_size+1)]
 node_1 = play_cups(new_list, pow(10, 7))
 cur_node = next(node_1)
 next_node = next(cur_node)
-print('Part b:', cur_node, next_node, cur_node.getVal() * next_node.getVal())
+print('Part b:', cur_node, '*', next_node, '=', cur_node.getVal() * next_node.getVal())
 print('Part b timing:', time() - start_b)
