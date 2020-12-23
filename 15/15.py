@@ -77,7 +77,7 @@ startb = time()
 print('a timing: ', startb - start)
 
 # Use send to set new goal
-print('30000000th number spoken:', talker.send(3000))
+print('30000000th number spoken:', talker.send(30000000))
 print('b timing: ', time() - startb)
 print()
 print('overall timing:', time() - start)
