@@ -25,7 +25,7 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='24-input.txt'
-#INPUT_FILE='24a-example.txt'
+INPUT_FILE='24a-example.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 #input = ['nwwswee']
@@ -134,6 +134,12 @@ for line in input:
 
 
 def getAdjacentCoordinates(cur_node: Tuple[int, int]) -> List[Tuple[int, int]]:
+    """
+    Returns the coordinates for the adjacent tiles
+
+    :param cur_node: the tuple containing the row index and column index
+    :return: A list of row and col indices whose order is the following: NE (north-east node), SE, SW, NW, E, W
+    """
     res = []
     if cur_node[1] % 2 == 0:
         # ne
@@ -163,6 +169,12 @@ def getAdjacentCoordinates(cur_node: Tuple[int, int]) -> List[Tuple[int, int]]:
 
 
 def getAdjacentNodes(cur_node: Tuple[int, int], grid: Dict[Tuple[int, int], bool]) -> List[bool]:
+    """
+    Returns the adjacent tiles for the given tile
+
+    :param cur_node: the tuple containing the row index and column index
+    :return: A list of adjacent tiles whose order is the following: NE (north-east node), SE, SW, NW, E, W
+    """
     return list(map(lambda x: grid[x], getAdjacentCoordinates(cur_node)))
 
 
@@ -170,7 +182,6 @@ print('part a:', sum([value for value in grid.values()]))
 print('part a timing:', time() - start_a)
 start_b = time()
 
-#pprint.pprint(grid)
 print_grid(grid)
 print('='*80)
 # Start part b
@@ -179,7 +190,7 @@ for turn in range(100):
     new_grid = deepcopy(grid)
     potential_white = set()
 
-    # since grid is a default dict, accessing previously unaccessed keys will cause the size of the dict to change so
+    # since grid is a default dict, accessing previously un-accessed keys will cause the size of the dict to change so
     # need to make a copy first
     grid_copy = grid.copy()
 
@@ -244,8 +255,8 @@ for turn in range(100):
                         potential_white.add(check_pos)
 
 
+    # Go through our candidates of white -> black to make sure they actually only have 2 adjacent black nodes
     for pos in potential_white:
-        # Go through our candidates of white -> black to make sure they actually only have 2 adjacent black nodes
         new_grid[pos] = sum(getAdjacentNodes(pos, grid)) == 2
 
     # Now that we've visited all the black square and checked its neighbors, all the eligible white squares should be
