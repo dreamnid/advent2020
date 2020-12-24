@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from collections import defaultdict
 from copy import deepcopy
-
 from functools import partial, reduce
 from itertools import chain, cycle, takewhile
 import math
@@ -11,8 +10,6 @@ import pprint
 import re
 from time import time
 from typing import Dict, List, Set, Tuple, Union
-
-from humanize import intcomma
 
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
