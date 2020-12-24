@@ -129,12 +129,11 @@ for line in input:
     #print('   ', point_tuple)
     grid[point_tuple] = not grid[point_tuple]
 
-print('part a:', sum([value for value in grid.values()]))
-print('part a timing:', time() - start_a)
-print()
-
 print('Initial grid')
 print_grid(grid)
+print()
+print('part a:', sum([value for value in grid.values()]))
+print('part a timing:', time() - start_a)
 print('='*80)
 
 ###########################################################################################################
