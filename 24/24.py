@@ -25,7 +25,7 @@ if __name__ == '__main__':
         from util import *
 
 INPUT_FILE='24-input.txt'
-INPUT_FILE='24a-example.txt'
+#INPUT_FILE='24a-example.txt'
 
 input = [line for line in get_file_contents(INPUT_FILE)[0]]
 #input = ['nwwswee']
@@ -46,6 +46,7 @@ def print_grid(grid, x_size=None, y_size=None):
             min_y = pos[1]
         if pos[1] > max_y:
             max_y = pos[1]
+
     if x_size:
         tmp = int(x_size / 2)
         min_x = -tmp
@@ -57,12 +58,12 @@ def print_grid(grid, x_size=None, y_size=None):
 
     for row in range(max_y, min_y-1, -1):
         for col in range(min_x, max_x+1):
+            if row % 2 == 1 and col == min_x:
+                print(' ', end='')
             if row == 0 and col == 0:
                 print('\033[1mZ\033[0m' if grid[(col, row)] else 'z', end=' ')
-            elif (row % 2 == 0 and col % 2 == 0) or (row % 2 == 1 and col %2 == 1):
-                print('\033[1mB\033[0m' if grid[(col, row)] else 'w', end=' ')
             else:
-                print(' ', end=' ')
+                print('\033[1mB\033[0m' if grid[(col, row)] else 'w', end=' ')
 
         print()
 
@@ -180,13 +181,14 @@ def getAdjacentNodes(cur_node: Tuple[int, int], grid: Dict[Tuple[int, int], bool
 
 print('part a:', sum([value for value in grid.values()]))
 print('part a timing:', time() - start_a)
+print()
 start_b = time()
 
+print('Initial grid')
 print_grid(grid)
 print('='*80)
 # Start part b
 for turn in range(100):
-
     new_grid = deepcopy(grid)
     potential_white = set()
 
@@ -267,9 +269,11 @@ for turn in range(100):
 
     grid = new_grid
 
-    #print('turn:', turn+1, sum([value for value in grid.values()]))
-    #print_grid(grid)
-    #print()
+    # Since the graph can grow pretty big, only show the first few turns
+    if turn < 8 and False:
+        print('turn:', turn+1, sum([value for value in grid.values()]))
+        print_grid(grid)
+        print()
 #pprint.pprint(grid)
 print('*********')
 print('part b:', sum([value for value in grid.values()]))
