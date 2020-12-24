@@ -18,35 +18,7 @@ Part a + b
 (advent2020) ➜  24 git:(master) ✗ time python3 24.py 
 part a: 300
 part a timing: 0.0031075477600097656
-w   w   w   B   B   w   B   B   B   w   w   w   w   w 
-  w   w   w   w   B   B   B   B   B   B   w   w   w   
-w   w   w   w   B   B   w   w   w   B   w   w   w   w 
-  w   w   B   w   B   w   w   B   B   w   w   w   w   
-w   w   B   B   B   B   w   w   B   w   B   w   w   w 
-  w   w   B   B   B   w   B   w   B   B   B   w   w   
-w   w   B   B   w   B   B   B   B   B   w   w   w   w 
-  w   B   w   B   w   w   w   B   B   B   B   w   w   
-w   w   w   B   w   B   w   B   B   B   B   w   w   w 
-  w   w   B   B   w   B   B   w   w   w   w   B   w   
-w   B   w   B   w   w   w   B   B   w   B   B   w   w 
-  w   w   w   w   B   w   B   w   B   B   B   w   w   
-w   B   B   B   B   w   w   B   B   w   B   B   w   w 
-  w   w   B   w   w   w   z   B   B   w   B   w   B   
-w   B   B   w   B   B   w   w   B   w   w   B   w   w 
-  B   w   w   w   B   B   B   w   B   w   B   B   B   
-w   B   w   B   B   B   w   w   B   w   B   B   B   w 
-  w   B   w   w   B   B   B   B   w   B   w   B   w   
-w   B   w   B   B   w   w   w   B   B   B   B   w   w 
-  w   B   w   B   w   B   B   B   B   B   B   B   w   
-w   w   B   B   w   B   w   B   B   B   B   B   w   w 
-  w   w   B   w   B   w   B   w   w   B   w   w   w   
-w   w   w   B   B   w   w   w   B   B   w   w   w   w 
-  w   w   w   w   B   w   B   B   w   w   B   w   w   
-w   w   w   B   B   w   B   w   B   w   w   w   w   w 
-  w   w   w   w   w   w   B   B   w   w   w   w   w   
-w   w   w   B   B   B   B   B   B   B   w   w   w   w 
 ================================================================================
-*********
 part b: 3466
 part b timing 2.2121362686157227
 python3 24.py  2.29s user 0.00s system 99% cpu 2.290 total
