@@ -1,9 +1,15 @@
 # Day 24
 Had trouble figuring out coordinates system since in a regular cartesian grid, `nwwswee` would lead you one space left from the origin
 
-To simplify, white is False, black is True
---
+To simplify logic, white is False, black is True. This lets us use `sum` which treats True as 1
+
+### Part b
 When doing part b, realized my coordinate system was not correct. Ended up looking up hexagonal coordinate implementations
+
+### Future work
+* Representing hexagonal coordinates as [complex numbers](https://www.reddit.com/r/adventofcode/comments/kja2qt/2020_day_24_complex_numbers_and_eval_ftw/)
+* Checking out [other hexagon representations](https://www.redblobgames.com/grids/hexagons/#coordinates-offset)
+* Come up with a visualization on the print_graph() output for each turn
 
 ## Performance
 Part a
