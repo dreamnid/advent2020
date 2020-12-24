@@ -129,6 +129,15 @@ for line in input:
     #print('   ', point_tuple)
     grid[point_tuple] = not grid[point_tuple]
 
+print('part a:', sum([value for value in grid.values()]))
+print('part a timing:', time() - start_a)
+print()
+
+print('Initial grid')
+print_grid(grid)
+print('='*80)
+
+###########################################################################################################
 
 
 def getAdjacentCoordinates(cur_node: Tuple[int, int]) -> List[Tuple[int, int]]:
@@ -175,16 +184,8 @@ def getAdjacentNodes(cur_node: Tuple[int, int], grid: Dict[Tuple[int, int], bool
     """
     return list(map(lambda x: grid[x], getAdjacentCoordinates(cur_node)))
 
-
-print('part a:', sum([value for value in grid.values()]))
-print('part a timing:', time() - start_a)
-print()
-start_b = time()
-
-print('Initial grid')
-print_grid(grid)
-print('='*80)
 # Start part b
+start_b = time()
 for turn in range(100):
     new_grid = deepcopy(grid)
     potential_white = set()
