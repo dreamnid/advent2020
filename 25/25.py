@@ -10,8 +10,6 @@ import re
 from time import time
 from typing import Dict, List, Set, Tuple, Union
 
-from humanize import intcomma
-
 # Fix path so we can do a relative import: https://stackoverflow.com/a/27876800
 if __name__ == '__main__':
     if __package__ is None:
@@ -42,14 +40,10 @@ def calc_loop_size(target: int) -> int:
     return loop
 
 def get_transform(subject: int, loop_size: int) -> int:
-    print(subject, loop_size)
     return reduce(lambda x, y: (x * subject) % 20201227, range(loop_size), 1)
 
 
 loop_nums = list(map(calc_loop_size, input))
-print(calc_loop_size(5764801))
-print(calc_loop_size(17807724))
-print(get_transform(17807724, 8))
 print(list(zip(input, reversed(loop_nums))))
 encryption_keys = list(starmap(get_transform, zip(input, reversed(loop_nums))))
 print('answer a:', encryption_keys[0])
